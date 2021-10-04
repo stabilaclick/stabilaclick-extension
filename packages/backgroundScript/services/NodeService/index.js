@@ -1,9 +1,9 @@
 import StorageService from '../StorageService';
 import randomUUID from 'uuid/v4';
-import TronWeb from 'tronweb';
-import SunWeb from 'sunweb';
-import Logger from '@tronlink/lib/logger';
-import { CONTRACT_ADDRESS,SIDE_CHAIN_ID,NODE } from '@tronlink/lib/constants';
+import StabilaWeb from 'stabilaweb';
+import UnitWeb from 'unitweb';
+import Logger from '@stabilaclick/lib/logger';
+import { CONTRACT_ADDRESS,SIDE_CHAIN_ID,NODE } from '@stabilaclick/lib/constants';
 import { BigNumber } from 'bignumber.js';
 
 const logger = new Logger('NodeService');
@@ -11,7 +11,7 @@ const logger = new Logger('NodeService');
 const NodeService = {
     _chains:{
         '_':{
-            name:'TRON',
+            name:'STABILA',
             default:true
         },
         [ SIDE_CHAIN_ID ]:{
@@ -31,18 +31,18 @@ const NodeService = {
             // },
             'f0b1e38e-7bee-485e-9d3f-69410bf30681': {
                 name: 'Mainnet',
-                fullNode: 'https://api.trongrid.io',
-                solidityNode: 'https://api.trongrid.io',
-                eventServer: 'https://api.trongrid.io',
+                fullNode: 'https://api.stabilagrid.io',
+                solidityNode: 'https://api.stabilagrid.io',
+                eventServer: 'https://api.stabilagrid.io',
                 default: true, // false
                 chain:'_' ,
                 connect: SIDE_CHAIN_ID
             },
             '6739be94-ee43-46af-9a62-690cf0947269': {
-                name: 'Shasta Testnet',
-                fullNode: 'https://api.shasta.trongrid.io',
-                solidityNode: 'https://api.shasta.trongrid.io',
-                eventServer: 'https://api.shasta.trongrid.io',
+                name: 'Testnet Testnet',
+                fullNode: 'https://api.testnet.stabilagrid.io',
+                solidityNode: 'https://api.testnet.stabilagrid.io',
+                eventServer: 'https://api.testnet.stabilagrid.io',
                 default: false,
                 chain:'_'
             },
@@ -56,9 +56,9 @@ const NodeService = {
             // },
             'a981e232-a995-4c81-9653-c85e4d05f599':{
                 name: 'DappChain',
-                fullNode: 'https://sun.tronex.io',
-                solidityNode: 'https://sun.tronex.io',
-                eventServer: 'https://sun.tronex.io',
+                fullNode: 'https://unit.stabilaex.io',
+                solidityNode: 'https://unit.stabilaex.io',
+                eventServer: 'https://unit.stabilaex.io',
                 default: true,
                 chain: SIDE_CHAIN_ID
             },
@@ -103,19 +103,19 @@ const NodeService = {
 
     init() {
         this._read();
-        this._updateTronWeb();
+        this._updateStabilaWeb();
     },
 
-    _updateTronWeb(skipAddress = false) {
+    _updateStabilaWeb(skipAddress = false) {
         const {
             fullNode,
             solidityNode,
             eventServer
         } = this.getCurrentNode();
 
-        this.sunWeb = new SunWeb(
-            //{fullNode:'https://api.trongrid.io',solidityNode:'https://api.trongrid.io',eventServer:'https://api.trongrid.io'},
-            //{fullNode:'https://sun.tronex.io',solidityNode:'https://sun.tronex.io',eventServer:'https://sun.tronex.io'},
+        this.unitWeb = new UnitWeb(
+            //{fullNode:'https://api.stabilagrid.io',solidityNode:'https://api.stabilagrid.io',eventServer:'https://api.stabilagrid.io'},
+            //{fullNode:'https://unit.stabilaex.io',solidityNode:'https://unit.stabilaex.io',eventServer:'https://unit.stabilaex.io'},
             NODE.MAIN,
             NODE.SIDE,
             CONTRACT_ADDRESS.MAIN,
@@ -123,7 +123,7 @@ const NodeService = {
             SIDE_CHAIN_ID
         );
 
-        this.tronWeb = new TronWeb(
+        this.stabilaWeb = new StabilaWeb(
             fullNode,
             solidityNode,
             eventServer
@@ -133,13 +133,13 @@ const NodeService = {
     },
 
     setAddress() {
-        if(!this.tronWeb)
-            this._updateTronWeb();
+        if(!this.stabilaWeb)
+            this._updateStabilaWeb();
 
         if(!StorageService.selectedAccount)
-            return this._updateTronWeb(true);
+            return this._updateStabilaWeb(true);
 
-        this.tronWeb.setAddress(
+        this.stabilaWeb.setAddress(
             StorageService.selectedAccount
         );
     },
@@ -156,7 +156,7 @@ const NodeService = {
 
         StorageService.selectChain(this._selectedChain);
         StorageService.selectNode(this._selectedNode);
-        this._updateTronWeb();
+        this._updateStabilaWeb();
     },
 
     getNodes() {
@@ -181,7 +181,7 @@ const NodeService = {
         StorageService.selectNode(nodeID);
 
         this._selectedNode = nodeID;
-        this._updateTronWeb();
+        this._updateStabilaWeb();
     },
 
     deleteNode(nodeID) {
@@ -199,7 +199,7 @@ const NodeService = {
     selectChain(chainId) {
         StorageService.selectChain(chainId);
         this._selectedChain = chainId;
-        this._updateTronWeb();
+        this._updateStabilaWeb();
     },
 
     addNode(node) {
@@ -216,7 +216,7 @@ const NodeService = {
     async getSmartToken(address) {
         try {
             let balance;
-            const contract = await this.tronWeb.contract().at(address);
+            const contract = await this.stabilaWeb.contract().at(address);
             if(!contract.name && !contract.symbol && !contract.decimals)
                 return false;
             const d = await contract.decimals().call();

@@ -4,17 +4,17 @@
  * @Last Modified by: lxm
 
  * @Last Modified time: 2019-06-13 12:05:36
- * TronBankPage
+ * StabilaBankPage
  */
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import TronWeb from 'tronweb';
-import { BANK_STATE, APP_STATE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import StabilaWeb from 'stabilaweb';
+import { BANK_STATE, APP_STATE } from '@stabilaclick/lib/constants';
 import { NavBar, Button, Modal, Toast } from 'antd-mobile';
-import Utils from '@tronlink/lib/utils';
-import { getBankDefaultDataApi, getBankIsRentApi, getBankBalanceEnoughApi, postBankOrderApi } from '@tronlink/popup/src/fetch/tronLending/tronLending';
-import './TronBankController.scss';
+import Utils from '@stabilaclick/lib/utils';
+import { getBankDefaultDataApi, getBankIsRentApi, getBankBalanceEnoughApi, postBankOrderApi } from '@stabilaclick/popup/src/fetch/stabilaLending/stabilaLending';
+import './StabilaBankController.scss';
 class BankController extends React.Component {
     constructor(props) {
         super(props);
@@ -87,17 +87,17 @@ class BankController extends React.Component {
         const defaultData = await PopupAPI.getBankDefaultData(requestUrl);
         // current account balance
         const { accounts, selected } = this.props.accounts;
-        const totalEnergy = accounts[ selected.address ].energy;
-        const usedEnergy = accounts[ selected.address ].energyUsed;
+        const totalUcr = accounts[ selected.address ].ucr;
+        const usedUcr = accounts[ selected.address ].ucrUsed;
         const curentInputBalance = {
-            used: usedEnergy,
-            total: totalEnergy,
+            used: usedUcr,
+            total: totalUcr,
             show: true
         };
-        let costTrx;
-        const totalEnergyWeight = selected.totalEnergyWeight;
-        const totalenergyLimitNum = selected.TotalEnergyLimit;
-        if(Number.isFinite(defaultData.energy)) costTrx = Math.ceil(defaultData.energy / totalenergyLimitNum * totalEnergyWeight);else costTrx = 0;
+        let costStb;
+        const totalUcrWeight = selected.totalUcrWeight;
+        const totalucrLimitNum = selected.TotalUcrLimit;
+        if(Number.isFinite(defaultData.ucr)) costStb = Math.ceil(defaultData.ucr / totalucrLimitNum * totalUcrWeight);else costStb = 0;
         this.setState({
             rentNumMin: defaultData.rental_amount_min / Math.pow(10, 6),
             rentNumMax: defaultData.rental_amount_max / Math.pow(10, 6),
@@ -105,11 +105,11 @@ class BankController extends React.Component {
             rentDayMax: defaultData.rental_days_max,
             discount: defaultData.discount,
             defaultUnit: {
-                num: defaultData.energy / 10000,
+                num: defaultData.ucr / 10000,
                 day: defaultData.days,
                 cost: defaultData.pay_amount / Math.pow(10, 6),
-                min: 1, // min distroy 1trx
-                total: costTrx
+                min: 1, // min distroy 1stb
+                total: costStb
             },
             curentInputBalance,
             ratio: defaultData.ratio
@@ -153,7 +153,7 @@ class BankController extends React.Component {
             }
             return;
         }
-        if(!TronWeb.isAddress(address)) {
+        if(!StabilaWeb.isAddress(address)) {
             recipient.valid = false;
             validOrderOverLimit.valid = true;
             isOnlineAddress.error = false;
@@ -213,16 +213,16 @@ class BankController extends React.Component {
                 recipient.error = false;
                 recipient.valid = false;
             }else {
-                let energyUsed = result.EnergyUsed;
-                let energyLimit = result.EnergyLimit;
-                if(typeof(energyUsed) == 'undefined') energyUsed = 0;
-                if(typeof(energyLimit) == 'undefined') energyLimit = 0;
+                let ucrUsed = result.UcrUsed;
+                let ucrLimit = result.UcrLimit;
+                if(typeof(ucrUsed) == 'undefined') ucrUsed = 0;
+                if(typeof(ucrLimit) == 'undefined') ucrLimit = 0;
                 isOnlineAddress.error = false;
                 recipient.error = false;
                 recipient.valid = true;
                 curentInputBalance.show = true;
-                curentInputBalance.used = energyUsed;
-                curentInputBalance.total = energyLimit;
+                curentInputBalance.used = ucrUsed;
+                curentInputBalance.total = ucrLimit;
             }
         }else {
             recipient.valid = false;
@@ -258,10 +258,10 @@ class BankController extends React.Component {
             }
         }else{
             const { selected } = this.props.accounts;
-            const totalEnergyWeight = selected.totalEnergyWeight;
-            const totalenergyLimitNum = selected.TotalEnergyLimit;
-            // predict num energy
-            if(Number.isFinite(totalEnergyWeight)) rentNum.predictVal = Math.ceil(rentVal / totalEnergyWeight * totalenergyLimitNum);else rentNum.predictVal = 0;
+            const totalUcrWeight = selected.totalUcrWeight;
+            const totalucrLimitNum = selected.TotalUcrLimit;
+            // predict num ucr
+            if(Number.isFinite(totalUcrWeight)) rentNum.predictVal = Math.ceil(rentVal / totalUcrWeight * totalucrLimitNum);else rentNum.predictVal = 0;
             if(rentVal <= rentNumMax && rentVal >= rentNumMin) {
                 if(_type === 2) {
                     rentNum.formatError = false;
@@ -456,15 +456,15 @@ class BankController extends React.Component {
     }
 
     rentDealSendFun(e) {
-        //send msg  entrustOrder(freezeAmount,payAmount,_days,Addr)  payAmount = freezeAmount*_days* ratio
+        //send msg  entrustOrder(cdAmount,payAmount,_days,Addr)  payAmount = cdAmount*_days* ratio
         Toast.loading('', 0);
         const { formatMessage } = this.props.intl;
         const { rentNum, rentDay, recipient, ratio, submitBtnIsClick } = this.state;
         const { selected } = this.props.accounts;
         const address = selected.address;
         const rentDayValue = Number(rentDay.value);
-        const freezeAmount = rentNum.value * Math.pow(10, 6);
-        const payAmount = Math.floor(freezeAmount * rentDayValue / ratio);
+        const cdAmount = rentNum.value * Math.pow(10, 6);
+        const payAmount = Math.floor(cdAmount * rentDayValue / ratio);
         let recipientAddress;
         if(recipient.value === '') recipientAddress = address; else recipientAddress = recipient.value;
         if (submitBtnIsClick) {
@@ -474,8 +474,8 @@ class BankController extends React.Component {
             // setTimeout(() => {
             //     this.setState({  });
             // }, 4000);
-            const hashResult = PopupAPI.rentEnergy(
-                freezeAmount,
+            const hashResult = PopupAPI.rentUcr(
+                cdAmount,
                 payAmount,
                 rentDayValue,
                 recipientAddress
@@ -533,30 +533,30 @@ class BankController extends React.Component {
         const orderList = [
             { id: 'BANK.RENTINFO.PAYADDRESS', user: 1, value: selected.address },
             { id: 'BANK.RENTINFO.RECEIVEADDRESS', user: 1, value: recipientVal },
-            { id: 'BANK.RENTINFO.RENTNUM', tip: 1, value: `${rentNum.value}TRX` },
+            { id: 'BANK.RENTINFO.RENTNUM', tip: 1, value: `${rentNum.value}STB` },
             { id: 'BANK.RENTINFO.RENTDAY', type: 3, value: rentDay.value },
-            { id: 'BANK.RENTINFO.PAYNUM', type: 0, value: `${rentUnit.cost}TRX` },
+            { id: 'BANK.RENTINFO.PAYNUM', type: 0, value: `${rentUnit.cost}STB` },
         ];
         const saveCost = parseFloat(rentUnit.cost / discount * (1 - discount));
-        const myImg = src => { return require(`../../assets/images/new/tronBank/${src}.svg`); };
+        const myImg = src => { return require(`../../assets/images/new/stabilaBank/${src}.svg`); };
         return (
-            <div className='TronBankContainer' onClick={(e) => { this.setState({ popoverVisible: false }); }}>
+            <div className='StabilaBankContainer' onClick={(e) => { this.setState({ popoverVisible: false }); }}>
                 <NavBar
                     className='navbar'
                     mode='light'
                     icon={<div className='commonBack'></div>}
                     onLeftClick={() => PopupAPI.changeState(APP_STATE.READY)}
                     rightContent={<img onClick={(e) => { e.stopPropagation();this.setState({ popoverVisible: !this.state.popoverVisible }); }} className='rightMore' src={myImg('more')} alt={'more'}/>}
-                >TronLending
+                >StabilaLending
                 </NavBar>
                 {/* navModal */}
                 <div className='navBarMoreMenu'>
                     <div className={ this.state.popoverVisible ? 'dropList menuList menuVisible' : 'dropList menuList'}>
-                        <div onClick={ () => { PopupAPI.changeState(APP_STATE.TRONBANK_RECORD); } } className='item'>
+                        <div onClick={ () => { PopupAPI.changeState(APP_STATE.STABILABANK_RECORD); } } className='item'>
                             <img onClick={() => { this.setState({ popoverVisible: true }); }} className='rightMoreIcon' src={myImg('record')} alt={'record'}/>
                             <FormattedMessage id='BANK.RENTNUMMODAL.RECORD' />
                         </div>
-                        <div onClick={(e) => { PopupAPI.changeState(APP_STATE.TRONBANK_HELP); }} className='item'>
+                        <div onClick={(e) => { PopupAPI.changeState(APP_STATE.STABILABANK_HELP); }} className='item'>
                             <img onClick={() => { this.setState({ popoverVisible: true }); }} className='rightMoreIcon' src={myImg('help')} alt={'help'}/>
                             <FormattedMessage id='BANK.RENTNUMMODAL.HELP' />
                         </div>
@@ -622,8 +622,8 @@ class BankController extends React.Component {
                                         onChange={ (e) => { this.handlerRentNumChange(e, 1); }}
                                         onBlur={ (e) => this.handlerRentNumChange(e, 2)}
                                         className='commonInput rentNumInput'
-                                        placeholder={ formatMessage({ id: 'BANK.INDEX.FREEZEPLACEHOLDER' }) + `（${rentNumMin}-${rentNumMax}）`}
-                                    /><span>TRX</span>
+                                        placeholder={ formatMessage({ id: 'BANK.INDEX.CDPLACEHOLDER' }) + `（${rentNumMin}-${rentNumMax}）`}
+                                    /><span>STB</span>
                                 </div>
                                 { rentNum.formatError ?
                                     <div className='errorMsg'>
@@ -683,26 +683,26 @@ class BankController extends React.Component {
                             {rentNum.valid && rentDay.valid ?
                                 <section className='calculation'>
                                     <div className='info'>
-                                        <span>{rentNum.value}TRX*{rentDay.value}</span>
+                                        <span>{rentNum.value}STB*{rentDay.value}</span>
                                         <span className='numInfo'>{rentDay.value > 2 ? <FormattedMessage id='BANK.INDEX.RENTDAYUNITS'/> : <FormattedMessage id='BANK.INDEX.RENTDAYUNIT'/>}</span>
                                         <span className='pointColor'>
-                                            <FormattedMessage id='BANK.INDEX.RENTCONST' /> {rentUnit.cost} TRX
+                                            <FormattedMessage id='BANK.INDEX.RENTCONST' /> {rentUnit.cost} STB
                                         </span>
                                     </div>
                                     <div className='curNum'>
                                         {
                                             language === 'en' ?
                                                 <span>
-                                                    (<span className='pointColor'>{ saveCost.toFixed(2) }TRX </span>saved than burn-TRX,<span className='pointColor'>{rentNum.value}TRX</span> required to freeze)
+                                                    (<span className='pointColor'>{ saveCost.toFixed(2) }STB </span>saved than burn-STB,<span className='pointColor'>{rentNum.value}STB</span> required to cd)
                                                 </span>
                                                 :
                                                 <span>
                                                     (
                                                     <FormattedMessage id='BANK.INDEX.ESTIMATECOMPARE'/>
                                                     <span className='pointColor'>
-                                                        <FormattedMessage id='BANK.INDEX.ESTIMATESAVE'/>{ saveCost.toFixed(2) }trx
+                                                        <FormattedMessage id='BANK.INDEX.ESTIMATESAVE'/>{ saveCost.toFixed(2) }stb
                                                     </span>,<FormattedMessage id='BANK.INDEX.ESTIMATEINFO'/>
-                                                    <span className='pointColor'>{rentNum.value}TRX</span>
+                                                    <span className='pointColor'>{rentNum.value}STB</span>
                                                     )
                                                 </span>
                                         }
@@ -713,7 +713,7 @@ class BankController extends React.Component {
                                         {
                                             language === 'en' ?
                                                 <span>
-                                                    renting {defaultUnit.num * 10}k energy * {defaultUnit.day} day costs {defaultUnit.cost}TRX
+                                                    renting {defaultUnit.num * 10}k ucr * {defaultUnit.day} day costs {defaultUnit.cost}STB
                                                 </span>
                                                 :
                                                 <FormattedMessage id='BANK.INDEX.RENTINTRODUCE' values={{ ...defaultUnit }} />
@@ -723,7 +723,7 @@ class BankController extends React.Component {
                                 </section>
                             }
                         </div>
-                        {/* tronBank submit */}
+                        {/* stabilaBank submit */}
                         <Button disabled={recipient.valid && rentNum.valid && rentDay.valid ? false : true }
                             className={recipient.valid && rentNum.valid && rentDay.valid ? 'bankSubmit normalValid' : 'bankSubmit inValid'}
                             onClick = {this.handlerInfoConfirm }

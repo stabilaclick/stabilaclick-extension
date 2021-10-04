@@ -1,7 +1,7 @@
 import StorageService from '../StorageService';
-import TronWeb from 'tronweb';
-import Logger from '@tronlink/lib/logger';
-import Utils from '@tronlink/lib/utils';
+import StabilaWeb from 'stabilaweb';
+import Logger from '@stabilaclick/lib/logger';
+import Utils from '@stabilaclick/lib/utils';
 import NodeService from '../NodeService';
 
 import { BigNumber } from 'bignumber.js';
@@ -12,7 +12,7 @@ import {
     FEE,
     TOP_TOKEN,
     API_URL
-} from '@tronlink/lib/constants';
+} from '@stabilaclick/lib/constants';
 import axios from 'axios';
 
 BigNumber.config({ EXPONENTIAL_AT: [-20, 30] });
@@ -27,14 +27,14 @@ class Account {
         this.updatingTransactions = false;
         this.selectedBankRecordId = 0;
         this.dealCurrencyPage = 0;
-        this.energy = 0;
-        this.energyUsed = 0;
+        this.ucr = 0;
+        this.ucrUsed = 0;
         this.balance = 0;
-        this.frozenBalance = 0;
+        this.cdedBalance = 0;
         this.netUsed = 0;
         this.netLimit = 0;
-        this.totalEnergyWeight = 0; //totalEnergyWeight
-        this.TotalEnergyLimit = 0; //TotalEnergyLimit
+        this.totalUcrWeight = 0; //totalUcrWeight
+        this.TotalUcrLimit = 0; //TotalUcrLimit
         this.lastUpdated = 0;
         this.asset = 0;
         this.ignoredTransactions = [];
@@ -45,7 +45,7 @@ class Account {
             basic: {},
             smart: {}
         };
-        this.trxAddress = 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb';
+        this.stbAddress = 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb';
         // this.tokens.smart[ CONTRACT_ADDRESS.USDT ] = {
         //     abbr: 'USDT',
         //     name: 'Tether USD',
@@ -89,12 +89,12 @@ class Account {
 
     _importPrivateKey(privateKey) {
         try {
-            if (privateKey.match(/^T/) && TronWeb.isAddress(privateKey)) {
+            if (privateKey.match(/^T/) && StabilaWeb.isAddress(privateKey)) {
                 this.privateKey = null;
                 this.address = privateKey;
             } else {
                 this.privateKey = privateKey;
-                this.address = TronWeb.address.fromPrivateKey(privateKey);
+                this.address = StabilaWeb.address.fromPrivateKey(privateKey);
             }
         } catch (ex) { // eslint-disable-line
             throw new Error('INVALID_PRIVATE_KEY');
@@ -121,15 +121,15 @@ class Account {
             type,
             name,
             balance,
-            frozenBalance,
-            totalEnergyWeight,
-            TotalEnergyLimit,
+            cdedBalance,
+            totalUcrWeight,
+            TotalUcrLimit,
             transactions,
             tokens,
             netLimit,
             netUsed,
-            energy,
-            energyUsed,
+            ucr,
+            ucrUsed,
             lastUpdated,
             asset
         } = StorageService.getAccount(this.address);
@@ -155,13 +155,13 @@ class Account {
         this.type = type;
         this.name = name;
         this.balance = balance;
-        this.frozenBalance = frozenBalance;
-        this.totalEnergyWeight = totalEnergyWeight;
-        this.TotalEnergyLimit = TotalEnergyLimit;
+        this.cdedBalance = cdedBalance;
+        this.totalUcrWeight = totalUcrWeight;
+        this.TotalUcrLimit = TotalUcrLimit;
         this.transactions = transactions;
         this.tokens = tokens;
-        this.energy = energy;
-        this.energyUsed = energyUsed;
+        this.ucr = ucr;
+        this.ucrUsed = ucrUsed;
         this.netLimit = netLimit;
         this.netUsed = netUsed;
         this.lastUpdated = lastUpdated;
@@ -187,9 +187,9 @@ class Account {
 
     reset() {
         this.balance = 0;
-        this.frozenBalance = 0;
-        this.energy = 0;
-        this.energyUsed = 0;
+        this.cdedBalance = 0;
+        this.ucr = 0;
+        this.ucrUsed = 0;
         this.netUsed = 0;
         this.transactions = {};
         this.ignoredTransactions = [];
@@ -206,8 +206,8 @@ class Account {
     }
 
     /** update data of an account
-     * basicTokenPriceList  trc10token price list(source from trxmarket)
-     * smartTokenPriceList  trc20token price list(source from trxmarket)
+     * basicTokenPriceList  trc10token price list(source from stbmarket)
+     * smartTokenPriceList  trc20token price list(source from stbmarket)
      * usdtPrice            price of usdt
      **/
     async update(basicTokenPriceList = [], smartTokenPriceList = [], usdtPrice = 0) {
@@ -225,7 +225,7 @@ class Account {
         try {
             const node = NodeService.getNodes().selected;
             //if (node === 'f0b1e38e-7bee-485e-9d3f-69410bf30681') {
-            const account = await NodeService.tronWeb.trx.getUnconfirmedAccount(address);
+            const account = await NodeService.stabilaWeb.stb.getUnconfirmedAccount(address);
 
             if (!account.address) {
                 logger.info(`Account ${address} does not exist on the network`);
@@ -234,7 +234,7 @@ class Account {
             }
             const addSmartTokens = Object.entries(this.tokens.smart).filter(([tokenId, token]) => !token.hasOwnProperty('abbr'));
             for (const [tokenId, token] of addSmartTokens) {
-                const contract = await NodeService.tronWeb.contract().at(tokenId).catch(e => false);
+                const contract = await NodeService.stabilaWeb.contract().at(tokenId).catch(e => false);
                 if (contract) {
                     let balance;
                     const number = await contract.balanceOf(address).call();
@@ -258,13 +258,13 @@ class Account {
                 this.tokens.smart[tokenId].isLocked = token.hasOwnProperty('isLocked') ? token.isLocked : false;
             }
 
-            this.frozenBalance = (account.frozen && account.frozen[0]['frozen_balance'] || 0) + (account['account_resource']['frozen_balance_for_energy'] && account['account_resource']['frozen_balance_for_energy']['frozen_balance'] || 0) + (account['delegated_frozen_balance_for_bandwidth'] || 0) + (account['account_resource']['delegated_frozen_balance_for_energy'] || 0);
+            this.cdedBalance = (account.cded && account.cded[0]['cded_balance'] || 0) + (account['account_resource']['cded_balance_for_ucr'] && account['account_resource']['cded_balance_for_ucr']['cded_balance'] || 0) + (account['delegated_cded_balance_for_bandwidth'] || 0) + (account['account_resource']['delegated_cded_balance_for_ucr'] || 0);
             this.balance = account.balance || 0;
             const filteredTokens = (account.assetV2 || []).filter(({ value }) => value >= 0);
             for (const { key, value } of filteredTokens) {
                 let token = this.tokens.basic[key] || false;
                 const filter = basicTokenPriceList.length ? basicTokenPriceList.filter(({ first_token_id }) => first_token_id === key) : [];
-                const trc20Filter = smartTokenPriceList.length ? smartTokenPriceList.filter(({ fTokenAddr, sTokenAddr }) => key === fTokenAddr && sTokenAddr === this.trxAddress) : [];
+                const trc20Filter = smartTokenPriceList.length ? smartTokenPriceList.filter(({ fTokenAddr, sTokenAddr }) => key === fTokenAddr && sTokenAddr === this.stbAddress) : [];
                 let { precision = 0, price } = filter.length ? filter[0] : (trc20Filter.length ? {
                     price: trc20Filter[0].price,
                     precision: trc20Filter[0].sPrecision
@@ -273,8 +273,8 @@ class Account {
                 if (node === 'f0b1e38e-7bee-485e-9d3f-69410bf30681' || node === 'a981e232-a995-4c81-9653-c85e4d05f599') {
                     if (StorageService.allTokens[NodeService._selectedChain === '_' ? 'mainchain' : 'sidechain'].filter(({ tokenId }) => tokenId === key).length === 0) return;
                     const {
-                        name = 'TRX',
-                        abbr = 'TRX',
+                        name = 'STB',
+                        abbr = 'STB',
                         decimals = 6,
                         imgUrl = false
                     } = StorageService.allTokens[NodeService._selectedChain === '_' ? 'mainchain' : 'sidechain'].filter(({ tokenId }) => tokenId === key)[0];
@@ -329,7 +329,7 @@ class Account {
             });
             for (let { tokenAddress, logoUrl = false, decimals = 6, isMapping, name, shortName, balance } of smartTokens) {
                 let token = this.tokens.smart[tokenAddress] || false;
-                const filter = smartTokenPriceList.filter(({ fTokenAddr, sTokenAddr }) => fTokenAddr === tokenAddress && sTokenAddr === this.trxAddress);
+                const filter = smartTokenPriceList.filter(({ fTokenAddr, sTokenAddr }) => fTokenAddr === tokenAddress && sTokenAddr === this.stbAddress);
                 const price = filter.length ? new BigNumber(filter[0].price).shiftedBy(-decimals).toString() : 0;
 
                 token = {
@@ -353,7 +353,7 @@ class Account {
                 //console.log(tokenAddress, this.tokens.smart[ tokenAddress ]);
             }
             //} else {
-            // const account = await NodeService.tronWeb.trx.getUnconfirmedAccount(address);
+            // const account = await NodeService.stabilaWeb.stb.getUnconfirmedAccount(address);
             // if (!account.address) {
             //     logger.info(`Account ${address} does not exist on the network`);
             //     this.reset();
@@ -403,7 +403,7 @@ class Account {
             // //this.tokens.smart = {};
             // const addSmartTokens = Object.entries(this.tokens.smart).filter(([tokenId, token]) => !token.hasOwnProperty('abbr') );
             // for (const [tokenId, token] of addSmartTokens) {
-            //     const contract = await NodeService.tronWeb.contract().at(tokenId).catch(e => false);
+            //     const contract = await NodeService.stabilaWeb.contract().at(tokenId).catch(e => false);
             //     if (contract) {
             //         let balance;
             //         const number = await contract.balanceOf(address).call();
@@ -428,15 +428,15 @@ class Account {
             // }
             // this.balance = account.balance || 0;
             // }
-            let totalOwnTrxCount = new BigNumber(this.balance + this.frozenBalance).shiftedBy(-6);
+            let totalOwnStbCount = new BigNumber(this.balance + this.cdedBalance).shiftedBy(-6);
             Object.entries({ ...this.tokens.basic, ...this.tokens.smart }).map(([tokenId, token]) => {
                 if (token.price !== 0 && !token.isLocked) {
                     const prices = StorageService.prices;
                     const price = tokenId === CONTRACT_ADDRESS.USDT ? token.price / prices.priceList[prices.selected] : token.price;
-                    totalOwnTrxCount = totalOwnTrxCount.plus(new BigNumber(token.balance).shiftedBy(-token.decimals).multipliedBy(price));
+                    totalOwnStbCount = totalOwnStbCount.plus(new BigNumber(token.balance).shiftedBy(-token.decimals).multipliedBy(price));
                 }
             });
-            this.asset = totalOwnTrxCount.toNumber();
+            this.asset = totalOwnStbCount.toNumber();
             this.lastUpdated = Date.now();
             await Promise.all([
                 this.updateBalance(),
@@ -451,13 +451,13 @@ class Account {
 
     async updateBalance() {
         const { address } = this;
-        const { EnergyLimit = 0, EnergyUsed = 0, freeNetLimit, NetLimit = 0, freeNetUsed = 0, NetUsed = 0, TotalEnergyWeight, TotalEnergyLimit } = await NodeService.tronWeb.trx.getAccountResources(address);
-        this.energy = EnergyLimit;
-        this.energyUsed = EnergyUsed;
+        const { UcrLimit = 0, UcrUsed = 0, freeNetLimit, NetLimit = 0, freeNetUsed = 0, NetUsed = 0, TotalUcrWeight, TotalUcrLimit } = await NodeService.stabilaWeb.stb.getAccountResources(address);
+        this.ucr = UcrLimit;
+        this.ucrUsed = UcrUsed;
         this.netLimit = freeNetLimit + NetLimit;
         this.netUsed = NetUsed + freeNetUsed;
-        this.totalEnergyWeight = TotalEnergyWeight;
-        this.TotalEnergyLimit = TotalEnergyLimit;
+        this.totalUcrWeight = TotalUcrWeight;
+        this.TotalUcrLimit = TotalUcrLimit;
     }
 
     async addSmartToken({ address, name, decimals, symbol }) {
@@ -466,7 +466,7 @@ class Account {
         let balance = 0;
 
         try {
-            const contract = await NodeService.tronWeb.contract().at(address);
+            const contract = await NodeService.stabilaWeb.contract().at(address);
             const balanceObj = await contract.balanceOf(this.address).call();
 
             const bn = new BigNumber(balanceObj.balance || balanceObj);
@@ -497,11 +497,11 @@ class Account {
             name: this.name,
             address: this.address,
             balance: this.balance,
-            frozenBalance: this.frozenBalance,
-            totalEnergyWeight: this.totalEnergyWeight,
-            TotalEnergyLimit: this.TotalEnergyLimit,
-            energy: this.energy,
-            energyUsed: this.energyUsed,
+            cdedBalance: this.cdedBalance,
+            totalUcrWeight: this.totalUcrWeight,
+            TotalUcrLimit: this.TotalUcrLimit,
+            ucr: this.ucr,
+            ucrUsed: this.ucrUsed,
             netLimit: this.netLimit,
             netUsed: this.netUsed,
             transactions: this.transactions,
@@ -521,12 +521,12 @@ class Account {
         StorageService.saveAccount(this);
     }
 
-    async sign(transaction, tronWeb = NodeService.tronWeb) {
+    async sign(transaction, stabilaWeb = NodeService.stabilaWeb) {
 
         if (!this.privateKey) {
             return 'CREATION.LEDGER.ALERT.BODY';
         }
-        const signedTransaction = tronWeb.trx.sign(
+        const signedTransaction = stabilaWeb.stb.sign(
             transaction,
             this.privateKey
         );
@@ -534,27 +534,27 @@ class Account {
         return await signedTransaction;
     }
 
-    async sendTrx(recipient, amount) {
+    async sendStb(recipient, amount) {
         const selectedChain = NodeService._selectedChain;
         try {
             if (selectedChain === '_') {
-                const transaction = await NodeService.tronWeb.transactionBuilder.sendTrx(
+                const transaction = await NodeService.stabilaWeb.transactionBuilder.sendStb(
                     recipient,
                     amount
                 );
 
-                await NodeService.tronWeb.trx.sendRawTransaction(
+                await NodeService.stabilaWeb.stb.sendRawTransaction(
                     await this.sign(transaction)
                 ).then(() => true).catch(err => Promise.reject(
                     'Failed to broadcast transaction'
                 ));
                 return Promise.resolve(transaction.txID);
             } else {
-                const { transaction } = await NodeService.sunWeb.sidechain.trx.sendTransaction(recipient, amount, { privateKey: this.privateKey });
+                const { transaction } = await NodeService.unitWeb.sidechain.stb.sendTransaction(recipient, amount, { privateKey: this.privateKey });
                 return Promise.resolve(transaction.txID);
             }
         } catch (ex) {
-            logger.error('Failed to send TRX:', ex);
+            logger.error('Failed to send STB:', ex);
             return Promise.reject(ex);
         }
     }
@@ -563,20 +563,20 @@ class Account {
         const selectedChain = NodeService._selectedChain;
         try {
             if (selectedChain === '_') {
-                const transaction = await NodeService.tronWeb.transactionBuilder.sendToken(
+                const transaction = await NodeService.stabilaWeb.transactionBuilder.sendToken(
                     recipient,
                     amount,
                     token
                 );
 
-                await NodeService.tronWeb.trx.sendRawTransaction(
+                await NodeService.stabilaWeb.stb.sendRawTransaction(
                     await this.sign(transaction)
                 ).then(() => true).catch(err => Promise.reject(
                     'Failed to broadcast transaction'
                 ));
                 return Promise.resolve(transaction.txID);
             } else {
-                const { transaction } = await NodeService.sunWeb.sidechain.trx.sendToken(recipient, amount, token, { privateKey: this.privateKey });
+                const { transaction } = await NodeService.unitWeb.sidechain.stb.sendToken(recipient, amount, token, { privateKey: this.privateKey });
                 return Promise.resolve(transaction.txID);
             }
         } catch (ex) {
@@ -589,20 +589,20 @@ class Account {
         const selectedChain = NodeService._selectedChain;
         try {
             if (selectedChain === '_') {
-                const contract = await NodeService.tronWeb.contract().at(token);
+                const contract = await NodeService.stabilaWeb.contract().at(token);
                 const transactionId = await contract.transfer(recipient, amount).send(
                     { feeLimit: 10 * Math.pow(10, 6) },
                     this.privateKey
                 );
                 return Promise.resolve(transactionId);
             } else {
-                const sidechain = NodeService.sunWeb.sidechain;
-                const { transaction } = await NodeService.tronWeb.transactionBuilder.triggerSmartContract(TronWeb.address.toHex(token), 'transfer(address,uint256)', { feeLimit: 1000000 }, [{
+                const sidechain = NodeService.unitWeb.sidechain;
+                const { transaction } = await NodeService.stabilaWeb.transactionBuilder.triggerSmartContract(StabilaWeb.address.toHex(token), 'transfer(address,uint256)', { feeLimit: 1000000 }, [{
                     'type': 'address',
                     'value': recipient
                 }, { 'type': 'uint256', 'value': amount }]);
-                const signTransaction = await sidechain.trx.sign(transaction, this.privateKey);
-                await sidechain.trx.sendRawTransaction(signTransaction);
+                const signTransaction = await sidechain.stb.sign(transaction, this.privateKey);
+                await sidechain.stb.sendRawTransaction(signTransaction);
                 return Promise.resolve(transaction.txID);
             }
         } catch (ex) {
@@ -611,57 +611,57 @@ class Account {
         }
     }
 
-    async depositTrx(amount) {
+    async depositStb(amount) {
         try {
-            const txId = await NodeService.sunWeb.depositTrx(amount, FEE.DEPOSIT_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
+            const txId = await NodeService.unitWeb.depositStb(amount, FEE.DEPOSIT_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
             return Promise.resolve(txId);
         } catch (ex) {
-            logger.error('Failed to send TRX:', ex);
+            logger.error('Failed to send STB:', ex);
             return Promise.reject(ex);
         }
     }
 
-    async withdrawTrx(amount) {
+    async withdrawStb(amount) {
         try {
-            const txId = await NodeService.sunWeb.withdrawTrx(amount, FEE.WITHDRAW_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
+            const txId = await NodeService.unitWeb.withdrawStb(amount, FEE.WITHDRAW_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
             return Promise.resolve(txId);
         } catch (ex) {
-            logger.error('Failed to send TRX:', ex);
+            logger.error('Failed to send STB:', ex);
             return Promise.reject(ex);
         }
     }
 
     async depositTrc10(id, amount) {
         try {
-            const txId = await NodeService.sunWeb.depositTrc10(id, amount, FEE.DEPOSIT_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
+            const txId = await NodeService.unitWeb.depositTrc10(id, amount, FEE.DEPOSIT_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
             return Promise.resolve(txId);
         } catch (ex) {
-            logger.error('Failed to send TRX:', ex);
+            logger.error('Failed to send STB:', ex);
             return Promise.reject(ex);
         }
     }
 
     async withdrawTrc10(id, amount) {
         try {
-            const txId = await NodeService.sunWeb.withdrawTrc10(id, amount, FEE.WITHDRAW_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
+            const txId = await NodeService.unitWeb.withdrawTrc10(id, amount, FEE.WITHDRAW_FEE, FEE.FEE_LIMIT, {}, this.privateKey);
             return Promise.resolve(txId);
         } catch (ex) {
-            logger.error('Failed to send TRX:', ex);
+            logger.error('Failed to send STB:', ex);
             return Promise.reject(ex);
         }
     }
 
     async depositTrc20(id, amount) {
         try {
-            const approve = await NodeService.sunWeb.approveTrc20(amount, FEE.FEE_LIMIT, id, {}, this.privateKey);
+            const approve = await NodeService.unitWeb.approveTrc20(amount, FEE.FEE_LIMIT, id, {}, this.privateKey);
             if (approve) {
-                const txId = await NodeService.sunWeb.depositTrc20(amount, FEE.DEPOSIT_FEE, FEE.FEE_LIMIT, id, {}, this.privateKey);
+                const txId = await NodeService.unitWeb.depositTrc20(amount, FEE.DEPOSIT_FEE, FEE.FEE_LIMIT, id, {}, this.privateKey);
                 return Promise.resolve(txId);
             } else {
                 return Promise.resolve('failed');
             }
         } catch (ex) {
-            logger.error('Failed to send TRX:', ex);
+            logger.error('Failed to send STB:', ex);
             return Promise.reject(ex);
         }
     }
@@ -669,11 +669,11 @@ class Account {
     async withdrawTrc20(id, amount) {
         try {
 
-            const txId = await NodeService.sunWeb.withdrawTrc20(amount, FEE.WITHDRAW_FEE, FEE.FEE_LIMIT, id, {}, this.privateKey);
+            const txId = await NodeService.unitWeb.withdrawTrc20(amount, FEE.WITHDRAW_FEE, FEE.FEE_LIMIT, id, {}, this.privateKey);
             return Promise.resolve(txId);
 
         } catch (ex) {
-            logger.error('Failed to send TRX:', ex);
+            logger.error('Failed to send STB:', ex);
             return Promise.reject(ex);
         }
     }

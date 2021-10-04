@@ -1,7 +1,7 @@
 {
-  "name": "@tronlink/contentScript",
+  "name": "@stabilaclick/contentScript",
   "main": "index.js",
-  "repository": "https://github.com/TronLink/TronLink",
+  "repository": "https://github.com/StabilaLink/StabilaLink",
   "author": "Kondax <kondaxsolutions@gmail.com>",
   "private": true,
   "version": "3.0.0",
@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "extensionizer": "^1.0.1",
-    "tronweb": "^2.7.4"
+    "stabilaweb": "^2.7.4"
   }
 }

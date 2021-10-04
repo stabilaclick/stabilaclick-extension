@@ -1,8 +1,8 @@
 /**
- * Created by tron on 2019/7/3.
+ * Created by stabila on 2019/7/3.
  */
 import React from 'react';
-import Button from '@tronlink/popup/src/components/Button';
+import Button from '@stabilaclick/popup/src/components/Button';
 import LoadingGif from 'assets/images/loading_black.gif';
 
 import { injectIntl } from 'react-intl';
@@ -15,12 +15,12 @@ class Loading extends React.Component {
     }
 
     componentDidMount(){
-        if(document.getElementById('tronLedgerBridge')){
-            document.head.removeChild(document.getElementById('tronLedgerBridge'));
+        if(document.getElementById('stabilaLedgerBridge')){
+            document.head.removeChild(document.getElementById('stabilaLedgerBridge'));
         }
         const iframe = document.createElement('iframe');
-        iframe.id = 'tronLedgerBridge';
-        iframe.src = 'https://zacharyle.github.io/tron-ledger-bridge?new='+Math.random();
+        iframe.id = 'stabilaLedgerBridge';
+        iframe.src = 'https://zacharyle.github.io/stabila-ledger-bridge?new='+Math.random();
         document.head.appendChild(iframe);
     }
 

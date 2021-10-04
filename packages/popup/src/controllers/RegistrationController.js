@@ -4,8 +4,8 @@ import Button from 'components/Button';
 import InputCriteria from 'components/InputCriteria';
 
 import { FormattedMessage } from 'react-intl';
-import { VALIDATION_STATE } from '@tronlink/lib/constants';
-import { PopupAPI } from '@tronlink/lib/api';
+import { VALIDATION_STATE } from '@stabilaclick/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
 
 class RegistrationController extends React.Component {
     state = {

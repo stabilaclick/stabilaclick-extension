@@ -1,15 +1,15 @@
 import React from 'react';
 import AccountName from 'components/AccountName';
-import Utils from '@tronlink/lib/utils';
+import Utils from '@stabilaclick/lib/utils';
 import Lottie from 'react-lottie';
 
-import { PopupAPI } from '@tronlink/lib/api';
-import { CREATION_STAGE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import { CREATION_STAGE } from '@stabilaclick/lib/constants';
 
 import WritingPhrase from './stages/WritingPhrase';
 import ConfirmingPhrase from './stages/ConfirmingPhrase';
 
-import * as checkmark from '@tronlink/popup/src/assets/animations/checkmark.json';
+import * as checkmark from '@stabilaclick/popup/src/assets/animations/checkmark.json';
 
 class CreateAccountController extends React.Component {
     animationOptions = {

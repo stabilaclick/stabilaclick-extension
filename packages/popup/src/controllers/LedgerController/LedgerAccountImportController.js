@@ -1,12 +1,12 @@
 import React from 'react';
-import AccountName from '@tronlink/popup/src/components/AccountName';
-import Button from '@tronlink/popup/src/components/Button';
-import { APP_STATE } from '@tronlink/lib/constants';
+import AccountName from '@stabilaclick/popup/src/components/AccountName';
+import Button from '@stabilaclick/popup/src/components/Button';
+import { APP_STATE } from '@stabilaclick/lib/constants';
 import { Toast } from 'antd-mobile';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import NodeService from '@tronlink/backgroundScript/services/NodeService';
-import { PopupAPI } from '@tronlink/lib/api';
+import NodeService from '@stabilaclick/backgroundScript/services/NodeService';
+import { PopupAPI } from '@stabilaclick/lib/api';
 
 //import './MnemonicImport.scss';
 const IMPORT_STAGE = {

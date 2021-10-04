@@ -1,8 +1,8 @@
-import TronWeb from 'tronweb';
-import Logger from '@tronlink/lib/logger';
+import StabilaWeb from 'stabilaweb';
+import Logger from '@stabilaclick/lib/logger';
 import axios from 'axios';
 
-const { HttpProvider } = TronWeb.providers;
+const { HttpProvider } = StabilaWeb.providers;
 const logger = new Logger('ProxiedProvider');
 
 class ProxiedProvider extends HttpProvider {

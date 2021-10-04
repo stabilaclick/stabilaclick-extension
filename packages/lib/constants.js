@@ -11,15 +11,15 @@ export const APP_STATE = {
     // Wallet is functional
     READY: 5, // [x] User is logged in (and at least 1 account exists)
     REQUESTING_CONFIRMATION: 6, // [x] Shown if confirmations are queued
-    RECEIVE: 7, //[x] Show if need to accept trx or tokens
-    SEND: 8, //[x] Show if need to send trx or tokens
+    RECEIVE: 7, //[x] Show if need to accept stb or tokens
+    SEND: 8, //[x] Show if need to send stb or tokens
     TRANSACTIONS: 9, //[x] Show transactions record
     SETTING: 10, //[x] Show setting
     ADD_TRC20_TOKEN: 11, //[x] Show setting
-    TRONBANK: 12, // [x] show TronBank page
-    TRONBANK_RECORD: 13, //[x] show TronBankRecord page
-    TRONBANK_DETAIL: 14, //[X] show TronBankDetail page
-    TRONBANK_HELP: 15,
+    STABILABANK: 12, // [x] show StabilaBank page
+    STABILABANK_RECORD: 13, //[x] show StabilaBankRecord page
+    STABILABANK_DETAIL: 14, //[X] show StabilaBankDetail page
+    STABILABANK_HELP: 15,
     USDT_INCOME_RECORD: 16, //[X] income record for usdt
     USDT_ACTIVITY_DETAIL: 17,
     DAPP_LIST: 18, // [X]show dapp list
@@ -60,8 +60,8 @@ export const RESTORATION_STAGE = {
     SETTING_NAME: 0,
     CHOOSING_TYPE: 1,
     IMPORT_PRIVATE_KEY: 2,
-    IMPORT_TRONWATCH_LEGACY: 3,
-    IMPORT_TRONSCAN: 4,
+    IMPORT_STABILAWATCH_LEGACY: 3,
+    IMPORT_STABILASCAN: 4,
     IMPORT_MNEMONIC: 5,
     IMPORT_KEY_STORE: 7,
     SUCCESS: 6
@@ -86,8 +86,8 @@ export const PAGES = {
 export const SUPPORTED_CONTRACTS = [
     'TransferContract',
     'TransferAssetContract',
-    'FreezeBalanceContract',
-    'UnfreezeBalanceContract',
+    'CdBalanceContract',
+    'UncdBalanceContract',
     'TriggerSmartContract'
 ];
 
@@ -172,8 +172,8 @@ export const SIDE_CHAIN_ID = '41E209E4DE650F0150788E8EC5CAFA240A23EB8EB7';
 export const NODE = {
     //MAIN: {fullNode:'http://47.252.84.158:8070',solidityNode:'http://47.252.84.158:8071',eventServer:'http://47.252.81.14:8070'},
     //SIDE: {fullNode:'http://47.252.85.90:8070',solidityNode:'http://47.252.85.90:8071',eventServer:'http://47.252.87.129:8070'},
-    MAIN: {fullNode: 'https://api.trongrid.io', solidityNode: 'https://api.trongrid.io', eventServer: 'https://api.trongrid.io'},
-    SIDE: {fullNode: 'https://sun.tronex.io', solidityNode: 'https://sun.tronex.io', eventServer: 'https://sun.tronex.io'}
+    MAIN: {fullNode: 'https://api.stabilagrid.io', solidityNode: 'https://api.stabilagrid.io', eventServer: 'https://api.stabilagrid.io'},
+    SIDE: {fullNode: 'https://unit.stabilaex.io', solidityNode: 'https://unit.stabilaex.io', eventServer: 'https://unit.stabilaex.io'}
 };
 export const FEE = {
     WITHDRAW_FEE:10000000,
@@ -182,4 +182,4 @@ export const FEE = {
     MIN_DEPOSIT_OR_WITHDRAW:10000000
 };
 
-export const API_URL = 'https://list.tronlink.org';
+export const API_URL = 'https://list.stabila.click';

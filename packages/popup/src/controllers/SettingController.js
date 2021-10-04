@@ -1,7 +1,7 @@
 import React from 'react';
-import { PopupAPI } from "@tronlink/lib/api";
+import { PopupAPI } from "@stabilaclick/lib/api";
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { APP_STATE } from '@tronlink/lib/constants';
+import { APP_STATE } from '@stabilaclick/lib/constants';
 class SettingController extends React.Component {
     constructor(props) {
         super(props);

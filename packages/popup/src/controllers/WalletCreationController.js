@@ -1,9 +1,9 @@
 import React from 'react';
-import WalletOption from '@tronlink/popup/src/components/WalletOption';
+import WalletOption from '@stabilaclick/popup/src/components/WalletOption';
 
 // import { FormattedMessage } from 'react-intl';
-import { APP_STATE } from '@tronlink/lib/constants';
-import { PopupAPI } from '@tronlink/lib/api';
+import { APP_STATE } from '@stabilaclick/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
 
 const onCreationSelect = () => PopupAPI.changeState(APP_STATE.CREATING);
 const onRestoreSelect = () => PopupAPI.changeState(APP_STATE.RESTORING);

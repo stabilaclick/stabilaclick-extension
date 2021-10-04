@@ -1,15 +1,15 @@
 import React from 'react';
-import AccountDetails from '@tronlink/popup/src/components/AccountDetails';
+import AccountDetails from '@stabilaclick/popup/src/components/AccountDetails';
 import CustomScroll from 'react-custom-scroll';
-import Input from '@tronlink/popup/src/components/Input';
-import Button from '@tronlink/popup/src/components/Button';
-import TronWeb from 'tronweb';
+import Input from '@stabilaclick/popup/src/components/Input';
+import Button from '@stabilaclick/popup/src/components/Button';
+import StabilaWeb from 'stabilaweb';
 import Dropdown from 'react-dropdown';
 
 import { connect } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
-import { VALIDATION_STATE } from '@tronlink/lib/constants';
-import { PopupAPI } from '@tronlink/lib/api';
+import { VALIDATION_STATE } from '@stabilaclick/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
 
 import {
     FormattedMessage,
@@ -19,7 +19,7 @@ import {
 import './SendPage.scss';
 
 const TOKEN_MODE = {
-    TRX: 'TRX',
+    STB: 'STB',
     TRC10: 'TRC10',
     TRC20: 'TRC20'
 };
@@ -35,7 +35,7 @@ class SendPage extends React.Component {
             value: ''
         },
         token: {
-            mode: TOKEN_MODE.TRX
+            mode: TOKEN_MODE.STB
         },
         success: false,
         error: false,
@@ -54,7 +54,7 @@ class SendPage extends React.Component {
 
     reset() {
         this.onAmountChange('0');
-        this.onModeChange(TOKEN_MODE.TRX);
+        this.onModeChange(TOKEN_MODE.STB);
     }
 
     onRecipientChange(address) {
@@ -68,7 +68,7 @@ class SendPage extends React.Component {
         if(!address.length)
             return this.setState({ recipient });
 
-        if(!TronWeb.isAddress(address))
+        if(!StabilaWeb.isAddress(address))
             recipient.valid = VALIDATION_STATE.INVALID;
         else recipient.valid = VALIDATION_STATE.VALID;
 
@@ -181,7 +181,7 @@ class SendPage extends React.Component {
 
         let balance = new BigNumber(0);
 
-        if(mode === TOKEN_MODE.TRX)
+        if(mode === TOKEN_MODE.STB)
             balance = new BigNumber(this.props.account.balance).shiftedBy(-6);
 
         if(mode === TOKEN_MODE.TRC10) {
@@ -226,8 +226,8 @@ class SendPage extends React.Component {
 
         let func;
 
-        if(mode === TOKEN_MODE.TRX) {
-            func = PopupAPI.sendTrx(
+        if(mode === TOKEN_MODE.STB) {
+            func = PopupAPI.sendStb(
                 recipient,
                 new BigNumber(amount).shiftedBy(6).toString()
             );
@@ -372,11 +372,11 @@ class SendPage extends React.Component {
             <div className='tokens'>
                 <div className='tabs'>
                     <FormattedMessage
-                        id='SEND.TOKENS.TRX'
+                        id='SEND.TOKENS.STB'
                         children={ token => (
                             <div
-                                className={ `token ${ mode === TOKEN_MODE.TRX ? 'active' : '' }` }
-                                onClick={ () => this.onModeChange(TOKEN_MODE.TRX) }
+                                className={ `token ${ mode === TOKEN_MODE.STB ? 'active' : '' }` }
+                                onClick={ () => this.onModeChange(TOKEN_MODE.STB) }
                             >
                                 { token }
                             </div>
@@ -405,7 +405,7 @@ class SendPage extends React.Component {
                         ) }
                     />
                 </div>
-                <div className={ `amount ${ mode === TOKEN_MODE.TRX ? 'noLeftRadius' : '' } ${ mode === TOKEN_MODE.TRC20 ? 'noRightRadius' : '' }` }>
+                <div className={ `amount ${ mode === TOKEN_MODE.STB ? 'noLeftRadius' : '' } ${ mode === TOKEN_MODE.TRC20 ? 'noRightRadius' : '' }` }>
                     <div className='inputContainer'>
                         <Input
                             value={ value }
@@ -414,8 +414,8 @@ class SendPage extends React.Component {
                             isDisabled={ isLoading }
                         />
                         {
-                            mode === TOKEN_MODE.TRX ?
-                                <span>TRX</span> :
+                            mode === TOKEN_MODE.STB ?
+                                <span>STB</span> :
                                 mode === TOKEN_MODE.TRC10 ?
                                     this.renderBasicDropdown() :
                                     this.renderSmartDropdown()

@@ -1,5 +1,5 @@
 /**
- * Created by tron on 2019/6/17.
+ * Created by stabila on 2019/6/17.
  */
 export default class debugout {
     constructor() {

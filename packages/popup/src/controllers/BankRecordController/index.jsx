@@ -7,10 +7,10 @@
  */
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import { APP_STATE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import { APP_STATE } from '@stabilaclick/lib/constants';
 import { NavBar, Tabs, Toast } from 'antd-mobile';
-import { getBankListApi } from '@tronlink/popup/src/fetch/tronLending/tronLending';
+import { getBankListApi } from '@stabilaclick/popup/src/fetch/stabilaLending/stabilaLending';
 
 import './BankRecodConntroller.scss';
 import RecordList from './subpage/RecordList';
@@ -118,7 +118,7 @@ class BankRecordController extends React.Component {
                     className='navbar'
                     mode='light'
                     icon={<div className='commonBack'></div>}
-                    onLeftClick={() => PopupAPI.changeState(APP_STATE.TRONBANK)}
+                    onLeftClick={() => PopupAPI.changeState(APP_STATE.STABILABANK)}
                 >
                     <FormattedMessage id='BANK.RENTNUMMODAL.RECORD' />
                 </NavBar>

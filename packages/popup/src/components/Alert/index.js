@@ -1,8 +1,8 @@
 /**
- * Created by tron on 2019/7/3.
+ * Created by stabila on 2019/7/3.
  */
 import React from 'react';
-import Button from '@tronlink/popup/src/components/Button';
+import Button from '@stabilaclick/popup/src/components/Button';
 
 import { injectIntl } from 'react-intl';
 

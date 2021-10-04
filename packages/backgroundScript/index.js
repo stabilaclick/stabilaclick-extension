@@ -1,22 +1,22 @@
-import Logger from '@tronlink/lib/logger';
-import MessageDuplex from '@tronlink/lib/MessageDuplex';
+import Logger from '@stabilaclick/lib/logger';
+import MessageDuplex from '@stabilaclick/lib/MessageDuplex';
 import NodeService from './services/NodeService';
 import StorageService from './services/StorageService';
 import WalletService from './services/WalletService';
-import Utils from '@tronlink/lib/utils';
-import transactionBuilder from '@tronlink/lib/transactionBuilder';
-import TronWeb from 'tronweb';
+import Utils from '@stabilaclick/lib/utils';
+import transactionBuilder from '@stabilaclick/lib/transactionBuilder';
+import StabilaWeb from 'stabilaweb';
 
 import * as Sentry from '@sentry/browser';
 
-import { CONFIRMATION_TYPE } from '@tronlink/lib/constants';
-import { BackgroundAPI } from '@tronlink/lib/api';
+import { CONFIRMATION_TYPE } from '@stabilaclick/lib/constants';
+import { BackgroundAPI } from '@stabilaclick/lib/api';
 import { version } from './package.json';
 
 // Make error reporting user-configurable
 Sentry.init({
     dsn: 'http://d29e163582a948cd8addab042f4c65c7@18.220.1.137:9000/6',
-    release: `TronLink@${ version }`
+    release: `StabilaLink@${ version }`
 });
 
 const duplex = new MessageDuplex.Host();
@@ -63,7 +63,7 @@ const backgroundScript = {
         ga('create', 'UA-126129673-2', 'auto');
         ga('send', 'pageview');
         ga('set', 'checkProtocolTask', null);
-        ga('set', 'appName', 'TronLink');
+        ga('set', 'appName', 'StabilaLink');
         ga('set', 'appVersion', version);
     },
 
@@ -94,7 +94,7 @@ const backgroundScript = {
         duplex.on('rejectConfirmation', this.walletService.rejectConfirmation);
 
         // WalletService: Blockchain actions
-        duplex.on('sendTrx', this.walletService.sendTrx);
+        duplex.on('sendStb', this.walletService.sendStb);
         duplex.on('sendBasicToken', this.walletService.sendBasicToken);
         duplex.on('sendSmartToken', this.walletService.sendSmartToken);
         duplex.on('getPrices', this.walletService.getPrices);
@@ -141,8 +141,8 @@ const backgroundScript = {
 
         duplex.on('getTransactionsByTokenId', this.walletService.getTransactionsByTokenId);
 
-        // tronBank energy
-        duplex.on('rentEnergy', this.walletService.rentEnergy);
+        // stabilaBank ucr
+        duplex.on('rentUcr', this.walletService.rentUcr);
         duplex.on('isValidOverTotal', this.walletService.isValidOverTotal);
         duplex.on('getBankDefaultData', this.walletService.getBankDefaultData);
         duplex.on('calculateRentCost', this.walletService.calculateRentCost);
@@ -180,8 +180,8 @@ const backgroundScript = {
         duplex.on('setPushMessage', this.walletService.setPushMessage);
 
         // WalletService:deposit, withdraw
-        duplex.on('depositTrx', this.walletService.depositTrx);
-        duplex.on('withdrawTrx', this.walletService.withdrawTrx);
+        duplex.on('depositStb', this.walletService.depositStb);
+        duplex.on('withdrawStb', this.walletService.withdrawStb);
 
         duplex.on('depositTrc10', this.walletService.depositTrc10);
         duplex.on('withdrawTrc10', this.walletService.withdrawTrc10);
@@ -250,7 +250,7 @@ const backgroundScript = {
                             selectedAccount
                         } = this.walletService;
 
-                        const tronWeb = NodeService.tronWeb;
+                        const stabilaWeb = NodeService.stabilaWeb;
                         const account = this.walletService.getAccount(selectedAccount);
                         const appWhitelist = this.walletService.appWhitelist.hasOwnProperty(hostname)?this.walletService.appWhitelist[ hostname ]:{};
 
@@ -274,11 +274,11 @@ const backgroundScript = {
                         }
 
                         const contractType = transaction.raw_data.contract[ 0 ].type;
-                        const contractAddress = TronWeb.address.fromHex(input.contract_address);
+                        const contractAddress = StabilaWeb.address.fromHex(input.contract_address);
                         const {
                             mapped,
                             error
-                        } = await transactionBuilder(tronWeb, contractType, input); // NodeService.getCurrentNode()
+                        } = await transactionBuilder(stabilaWeb, contractType, input); // NodeService.getCurrentNode()
 
                         if(error) {
                             return resolve({
@@ -290,7 +290,7 @@ const backgroundScript = {
 
                         const signedTransaction = await account.sign(
                             mapped.transaction || mapped,
-                            NodeService._selectedChain === '_' ? NodeService.sunWeb.mainchain : NodeService.sunWeb.sidechain
+                            NodeService._selectedChain === '_' ? NodeService.unitWeb.mainchain : NodeService.unitWeb.sidechain
                         );
 
                         const whitelist = this.walletService.contractWhitelist[ input.contract_address ];

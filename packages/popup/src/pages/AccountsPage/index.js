@@ -3,21 +3,21 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import swal from 'sweetalert2';
 import { Toast } from 'antd-mobile';
 import { BigNumber } from 'bignumber.js';
-import { PopupAPI } from '@tronlink/lib/api';
-import Utils from '@tronlink/lib/utils';
-import Header from '@tronlink/popup/src/controllers/PageController/Header';
-import ProcessBar from '@tronlink/popup/src/components/ProcessBar';
-import Button from '@tronlink/popup/src/components/Button';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import Utils from '@stabilaclick/lib/utils';
+import Header from '@stabilaclick/popup/src/controllers/PageController/Header';
+import ProcessBar from '@stabilaclick/popup/src/components/ProcessBar';
+import Button from '@stabilaclick/popup/src/components/Button';
 import { connect } from 'react-redux';
-import { CONTRACT_ADDRESS, APP_STATE, BUTTON_TYPE, ACCOUNT_TYPE, TOP_TOKEN } from '@tronlink/lib/constants';
+import { CONTRACT_ADDRESS, APP_STATE, BUTTON_TYPE, ACCOUNT_TYPE, TOP_TOKEN } from '@stabilaclick/lib/constants';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { app } from "@tronlink/popup/src";
-import Alert from '@tronlink/popup/src/components/Alert';
+import { app } from "@stabilaclick/popup/src";
+import Alert from '@stabilaclick/popup/src/components/Alert';
 import './AccountsPage.scss';
-import '@tronlink/popup/src/controllers/PageController/Header/Header.scss';
-const trxImg = require('@tronlink/popup/src/assets/images/new/trx.png');
-const token10DefaultImg = require('@tronlink/popup/src/assets/images/new/token_10_default.png');
-let tronscanUrl = '';
+import '@stabilaclick/popup/src/controllers/PageController/Header/Header.scss';
+const stbImg = require('@stabilaclick/popup/src/assets/images/new/stb.png');
+const token10DefaultImg = require('@stabilaclick/popup/src/assets/images/new/token_10_default.png');
+let stabilascanUrl = '';
 class AccountsPage extends React.Component {
     constructor() {
         super();
@@ -48,9 +48,9 @@ class AccountsPage extends React.Component {
         },100);
 
         const { prices, accounts } = this.props;
-        const t = { name: 'TRX', abbr:'trx', id: '_', amount: 0, decimals: 6, price: prices.priceList[ prices.selected ], imgUrl: trxImg };
+        const t = { name: 'STB', abbr:'stb', id: '_', amount: 0, decimals: 6, price: prices.priceList[ prices.selected ], imgUrl: stbImg };
         PopupAPI.setSelectedToken(t);
-        tronscanUrl = 'https://tronscan.org/#';
+        stabilascanUrl = 'https://stabilascan.org/#';
         const news = await PopupAPI.getNews();
         const ieos = await PopupAPI.getIeos();
         if(news.length > 0) {
@@ -156,16 +156,16 @@ class AccountsPage extends React.Component {
                             </div>
                             {
                                 accounts.selected.type !== ACCOUNT_TYPE.LEDGER && chains.selected === '_' ?
-                                    <div onClick={(e) => { e.stopPropagation();window.open(`${tronscanUrl}/account?from=tronlink&type=frozen`); }} className='item'>
-                                        <span className='icon frozen'>&nbsp;</span>
-                                        <FormattedMessage id='MENU.FROZEN_UNFROZEN' />
+                                    <div onClick={(e) => { e.stopPropagation();window.open(`${stabilascanUrl}/account?from=stabilaclick&type=cded`); }} className='item'>
+                                        <span className='icon cded'>&nbsp;</span>
+                                        <FormattedMessage id='MENU.CDED_UNCDED' />
                                     </div>
                                     :
                                     null
                             }
                             {
                                 accounts.selected.type !== ACCOUNT_TYPE.LEDGER && chains.selected === '_' ?
-                                    <div onClick={(e) => { e.stopPropagation();window.open(`${tronscanUrl}/sr/votes?from=tronlink`); }} className='item'>
+                                    <div onClick={(e) => { e.stopPropagation();window.open(`${stabilascanUrl}/sr/votes?from=stabilaclick`); }} className='item'>
                                         <span className='icon vote'>&nbsp;</span>
                                         <FormattedMessage id='MENU.VOTE' />
                                     </div>
@@ -184,7 +184,7 @@ class AccountsPage extends React.Component {
                             {
                                 accounts.selected.type !== ACCOUNT_TYPE.LEDGER && chains.selected === '_'
                                     ?
-                                    <div onClick={(e) => { e.stopPropagation();window.open(`${tronscanUrl}/account?from=tronlink`) }} className='item'>
+                                    <div onClick={(e) => { e.stopPropagation();window.open(`${stabilascanUrl}/account?from=stabilaclick`) }} className='item'>
                                         <span className='icon link'>&nbsp;</span>
                                         <FormattedMessage id='MENU.ACCOUNT_DETAIL' />
                                     </div>
@@ -238,27 +238,27 @@ class AccountsPage extends React.Component {
                         <ProcessBar percentage={(account.netLimit - account.netUsed) / account.netLimit} />
                     </div>
                     <div className={'cell'+(nodes.selected === 'f0b1e38e-7bee-485e-9d3f-69410bf30681' || nodes.selected === 'f0b1e38e-7bee-485e-9d3f-69410bf30682'?' bankSingle':'')} onClick={ () => {
-                        //PopupAPI.changeState(APP_STATE.TRONBANK);
+                        //PopupAPI.changeState(APP_STATE.STABILABANK);
                         if(nodes.selected === 'f0b1e38e-7bee-485e-9d3f-69410bf30681' || nodes.selected === 'f0b1e38e-7bee-485e-9d3f-69410bf30682')
-                            window.open('http://www.tronlending.org');
+                            window.open('http://www.stabilalending.org');
                     }}>
                         <div className='title'>
                             {
                                 nodes.selected === 'f0b1e38e-7bee-485e-9d3f-69410bf30681' || nodes.selected === 'f0b1e38e-7bee-485e-9d3f-69410bf30682' ?
                                     <span className='bankBox'>
-                                        <FormattedMessage id='CONFIRMATIONS.RESOURCE.ENERGY' />
-                                        {/*<img className='bankArrow' src={require('../../assets/images/new/tronBank/rightArrow.svg')} alt='arrow'/>*/}
+                                        <FormattedMessage id='CONFIRMATIONS.RESOURCE.UCR' />
+                                        {/*<img className='bankArrow' src={require('../../assets/images/new/stabilaBank/rightArrow.svg')} alt='arrow'/>*/}
                                         {/*<div className='bankPopover'>*/}
                                             {/*<div className='popoverTitle'><FormattedMessage id='BANK.INDEX.ENTRANCE' /></div>*/}
                                         {/*</div>*/}
                                     </span> :
-                                    <FormattedMessage id='CONFIRMATIONS.RESOURCE.ENERGY' />
+                                    <FormattedMessage id='CONFIRMATIONS.RESOURCE.UCR' />
                             }
                             <div className='num'>
-                                {account.energy - account.energyUsed}<span>/{account.energy}</span>
+                                {account.ucr - account.ucrUsed}<span>/{account.ucr}</span>
                             </div>
                         </div>
-                        <ProcessBar percentage={(account.energy - account.energyUsed) / account.energy} />
+                        <ProcessBar percentage={(account.ucr - account.ucrUsed) / account.ucr} />
                     </div>
                 </div>
                 :
@@ -329,7 +329,7 @@ class AccountsPage extends React.Component {
                             <div className='tokenItem' onClick={ () => {
                                 let o = { id: tokenId, name: token.name, abbr: token.abbr || token.symbol, decimals: token.decimals, amount, price: token.price, imgUrl: token.imgUrl ? token.imgUrl : token10DefaultImg,isMapping:token.isMapping};
                                 if(tokenId === '_') {
-                                    o.frozenBalance = new BigNumber(accounts.selected.frozenBalance)
+                                    o.cdedBalance = new BigNumber(accounts.selected.cdedBalance)
                                         .shiftedBy(-token.decimals)
                                         .toString();
                                     o.balance = new BigNumber(accounts.selected.balance)
@@ -352,7 +352,7 @@ class AccountsPage extends React.Component {
                                     }
                                     {
                                         token.isVerify ?
-                                            <img src={require('@tronlink/popup/src/assets/images/new/icon-verify.svg')} />
+                                            <img src={require('@stabilaclick/popup/src/assets/images/new/icon-verify.svg')} />
                                             :
                                             null
                                     }
@@ -453,7 +453,7 @@ class AccountsPage extends React.Component {
     render() {
         BigNumber.config({ EXPONENTIAL_AT: [-20,30] });
         let totalAsset = new BigNumber(0);
-        let totalTrx = new BigNumber(0);
+        let totalStb = new BigNumber(0);
         const { showChainList,mnemonic,privateKey,news,ieos,allTokens }  = this.state;
         const id = news.length > 0 ? news[0].id : 0;
         const { accounts,prices,nodes,setting,language:lng,vTokenList,chains } = this.props;
@@ -461,8 +461,8 @@ class AccountsPage extends React.Component {
         const { selected: { airdropInfo } } = accounts;
         const mode = 'productionMode';
         const { formatMessage } = this.props.intl;
-        const trx_price = prices.priceList[prices.selected];
-        const trx = { tokenId: '_', name: 'TRX', balance: (accounts.selected.balance + (accounts.selected.frozenBalance ? accounts.selected.frozenBalance: 0)), abbr: 'TRX', decimals: 6, imgUrl: trxImg, price: trx_price,isMapping:true};
+        const stb_price = prices.priceList[prices.selected];
+        const stb = { tokenId: '_', name: 'STB', balance: (accounts.selected.balance + (accounts.selected.cdedBalance ? accounts.selected.cdedBalance: 0)), abbr: 'STB', decimals: 6, imgUrl: stbImg, price: stb_price,isMapping:true};
         let tokens = { ...accounts.selected.tokens.basic, ...accounts.selected.tokens.smart };
 
         const topArray = [];
@@ -478,7 +478,7 @@ class AccountsPage extends React.Component {
             }
         });
         tokens = Utils.dataLetterSort(Object.entries(tokens).filter(([tokenId, token])=> typeof token === 'object').map(v => { v[1].isMapping = v[1].hasOwnProperty('isMapping')?v[1].isMapping:true;v[ 1 ].tokenId = v[ 0 ];return v[ 1 ]; }).filter(v => !v.isLocked ), 'abbr', 'symbol',topArray);
-        tokens = [trx, ...tokens];
+        tokens = [stb, ...tokens];
         tokens = tokens.map(({ tokenId, ...token }) => {
             token.decimals = token.decimals || 0;
             if(vTokenList.includes(tokenId))
@@ -489,7 +489,7 @@ class AccountsPage extends React.Component {
 
         Object.entries(accounts.accounts).map(([address, account]) => {
             totalAsset = totalAsset.plus(new BigNumber(account.asset));
-            totalTrx   = totalTrx.plus(new BigNumber(account.balance).shiftedBy(-6));
+            totalStb   = totalStb.plus(new BigNumber(account.balance).shiftedBy(-6));
         });
         const asset = accounts.accounts[ accounts.selected.address ] && accounts.accounts[ accounts.selected.address ].asset ? accounts.accounts[accounts.selected.address].asset : 0;
         const totalMoney = new BigNumber(asset).multipliedBy(prices.priceList[ prices.selected ]).toFixed(2);
@@ -564,12 +564,12 @@ class AccountsPage extends React.Component {
                             </div>
                             <div className="row2">
                                 <div className="cell">
-                                    <span>TRX:</span>
-                                    <span>{new BigNumber(totalTrx.toFixed(2)).toFormat()}</span>
+                                    <span>STB:</span>
+                                    <span>{new BigNumber(totalStb.toFixed(2)).toFormat()}</span>
                                 </div>
                                 <div className="cell">
                                     <FormattedMessage id="MENU.ACCOUNTS.TOTAL_ASSET" values={{sign:':'}} />
-                                    <span>{new BigNumber(totalAsset.multipliedBy(trx_price).toFixed(2)).toFormat()}{ prices.selected }</span>
+                                    <span>{new BigNumber(totalAsset.multipliedBy(stb_price).toFixed(2)).toFormat()}{ prices.selected }</span>
                                 </div>
                             </div>
                             <div className="row3">
@@ -592,8 +592,8 @@ class AccountsPage extends React.Component {
                                                     </div>
                                                 </div>
                                                 <div className="asset">
-                                                    <span>TRX: { new BigNumber(new BigNumber(account.balance).shiftedBy(-6).toFixed(2)).toFormat() }</span>
-                                                    <span><FormattedMessage id="MENU.ACCOUNTS.TOTAL_ASSET" values={{sign:':'}} /> {new BigNumber(new BigNumber(account.asset).multipliedBy(trx_price).toFixed(2)).toFormat()}{ prices.selected }</span>
+                                                    <span>STB: { new BigNumber(new BigNumber(account.balance).shiftedBy(-6).toFixed(2)).toFormat() }</span>
+                                                    <span><FormattedMessage id="MENU.ACCOUNTS.TOTAL_ASSET" values={{sign:':'}} /> {new BigNumber(new BigNumber(account.asset).multipliedBy(stb_price).toFixed(2)).toFormat()}{ prices.selected }</span>
                                                 </div>
                                             </div>
                                             <div className="bottom">

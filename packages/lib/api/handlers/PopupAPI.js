@@ -42,8 +42,8 @@ export default {
 
     // Transaction handling
 
-    sendTrx(recipient, amount) {
-        return this.duplex.send('sendTrx', { recipient, amount });
+    sendStb(recipient, amount) {
+        return this.duplex.send('sendStb', { recipient, amount });
     },
 
     sendBasicToken(recipient, amount, token) {
@@ -174,31 +174,31 @@ export default {
     },
 
 
-    //tronbank contract
-    rentEnergy(_freezeAmount, _payAmount, _days, _energyAddress) {
-        return this.duplex.send('rentEnergy', {
-            _freezeAmount,
+    //stabilabank contract
+    rentUcr(_cdAmount, _payAmount, _days, _ucrAddress) {
+        return this.duplex.send('rentUcr', {
+            _cdAmount,
             _payAmount,
             _days,
-            _energyAddress
+            _ucrAddress
         });
     },
 
-    bankOrderNotice(energyAddress, trxHash, requestUrl) {
+    bankOrderNotice(ucrAddress, stbHash, requestUrl) {
         return this.duplex.send('bankOrderNotice', {
-            energyAddress,
-            trxHash,
+            ucrAddress,
+            stbHash,
             requestUrl
         });
     },
 
-    //tronbank  index
+    //stabilabank  index
     getBankDefaultData(requestUrl) {
         return this.duplex.send('getBankDefaultData', { requestUrl });
     },
 
-    isValidOverTotal(receiverAddress, freezeAmount, requestUrl) {
-        return this.duplex.send('isValidOverTotal', { receiverAddress, freezeAmount, requestUrl });
+    isValidOverTotal(receiverAddress, cdAmount, requestUrl) {
+        return this.duplex.send('isValidOverTotal', { receiverAddress, cdAmount, requestUrl });
     },
 
     getTransactionsByTokenId(tokenId,fingerprint,direction,limit) {
@@ -217,8 +217,8 @@ export default {
         return this.duplex.send('addCount',id);
     },
 
-    calculateRentCost(receiverAddress, freezeAmount, days, requestUrl) {
-        return this.duplex.send('calculateRentCost', { receiverAddress, freezeAmount, days, requestUrl });
+    calculateRentCost(receiverAddress, cdAmount, days, requestUrl) {
+        return this.duplex.send('calculateRentCost', { receiverAddress, cdAmount, days, requestUrl });
     },
 
     isValidOrderAddress(address, requestUrl) {
@@ -310,12 +310,12 @@ export default {
         this.duplex.send('setPushMessage', {iconUrl, title, message, hash}, false);
     },
 
-    depositTrx(amount){
-        return this.duplex.send('depositTrx', amount);
+    depositStb(amount){
+        return this.duplex.send('depositStb', amount);
     },
 
-    withdrawTrx(amount){
-        return this.duplex.send('withdrawTrx', amount);
+    withdrawStb(amount){
+        return this.duplex.send('withdrawStb', amount);
     },
 
     depositTrc10(id, amount){

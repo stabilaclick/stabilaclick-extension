@@ -6,8 +6,8 @@
     "TransferAssetContract": "wallet/transferasset",
     "ParticipateAssetIssueContract": "wallet/participateassetissue",
     "AssetIssueContract": "wallet/createassetissue",
-    "FreezeBalanceContract": "wallet/freezebalance",
-    "UnfreezeBalanceContract": "wallet/unfreezebalance",
+    "CdBalanceContract": "wallet/cdbalance",
+    "UncdBalanceContract": "wallet/uncdbalance",
     "WithdrawBalanceContract": "wallet/withdrawbalance",
     "UpdateAssetContract": "wallet/updateasset",
     "CreateSmartContract": "wallet/deploycontract",
@@ -19,7 +19,7 @@
     "ExchangeInjectContract": "wallet/exchangeinject",
     "ProposalApproveContact": "wallet/proposalapprove",
     "ProposalDeleteContract": "wallet/proposaldelete",
-    "UnfreezeAssetContract": "wallet/unfreezeasset",
+    "UncdAssetContract": "wallet/uncdasset",
     "AccountUpdateContract": "wallet/updateaccount",
     "WitnessUpdateContract": "wallet/updatewitness"
 }

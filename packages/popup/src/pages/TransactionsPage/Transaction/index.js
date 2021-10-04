@@ -1,9 +1,9 @@
 import React from 'react';
 import moment from 'moment';
-import TronWeb from 'tronweb';
+import StabilaWeb from 'stabilaweb';
 import BigNumber from 'bignumber.js';
 
-import { SUPPORTED_CONTRACTS } from '@tronlink/lib/constants';
+import { SUPPORTED_CONTRACTS } from '@stabilaclick/lib/constants';
 
 import {
     FormattedMessage,
@@ -21,8 +21,8 @@ const renderAmount = (type, transaction, direction) => {
     let amount = false;
 
     switch(type) {
-        case 'FreezeBalanceContract':
-            amount = transaction.raw.value.frozen_balance / 1000000;
+        case 'CdBalanceContract':
+            amount = transaction.raw.value.cded_balance / 1000000;
             direction = 'from';
             break;
         case 'TransferContract':
@@ -98,7 +98,7 @@ const renderType = (type, direction) => {
 };
 
 const transformAddress = address => {
-    const transformedAddress = TronWeb.address.fromHex(address);
+    const transformedAddress = StabilaWeb.address.fromHex(address);
 
     const shortAddress = [
         transformedAddress.substr(0, 20),
@@ -128,12 +128,12 @@ const renderDetails = (type, transaction) => {
             return renderAddress(recipient);
         case 'TriggerSmartContract':
             return renderAddress(transaction.raw.value.contract_address);
-        case 'FreezeBalanceContract':
+        case 'CdBalanceContract':
             return (
                 <FormattedMessage
                     id='TRANSACTIONS.FROZE_BALANCE'
                     values={{
-                        duration: transaction.raw.value.frozen_duration
+                        duration: transaction.raw.value.cded_duration
                     }}
                 />
             );

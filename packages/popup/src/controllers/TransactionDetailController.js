@@ -106,7 +106,7 @@ class TransactionDetailController extends React.Component {
                             </CopyToClipboard>
                         </div>
                         {
-                            t.cost.energy_fee >= 0 && t.cost.net_fee >= 0 && t.cost.energy_fee + t.cost.net_fee > 0
+                            t.cost.ucr_fee >= 0 && t.cost.net_fee >= 0 && t.cost.ucr_fee + t.cost.net_fee > 0
                                 ?
                                 <div className='cell'>
                                     <div className='title'>
@@ -129,15 +129,15 @@ class TransactionDetailController extends React.Component {
                                             </Popover>
                                     </div>
                                     <div className='content'>
-                                        {new BigNumber(t.cost.energy_fee + t.cost.net_fee).shiftedBy(-6).toString()} TRX
+                                        {new BigNumber(t.cost.ucr_fee + t.cost.net_fee).shiftedBy(-6).toString()} STB
                                     </div>
                                 </div>
                                 :
                                 null
                         }
                     </div>
-                    <div className='part3' onClick={() => window.open(`https://tronscan.org/#/transaction/${t.hash}`)}>
-                        <FormattedMessage id='TRANSACTION_DETAIL.GO_TRONSCAN' />
+                    <div className='part3' onClick={() => window.open(`https://stabilascan.org/#/transaction/${t.hash}`)}>
+                        <FormattedMessage id='TRANSACTION_DETAIL.GO_STABILASCAN' />
                     </div>
                 </div>
             </div>

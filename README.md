@@ -1,10 +1,10 @@
-# TronLink  
+# StabilaLink  
 
-TronLink is firstly launched at TRON’s official website and backed by TRON foundation, TronLink is the TRON wallet with the most users, coming in three versions (Chrome Wallet Extension/iOS/Android), and you're looking at the Chrome Wallet Extension for TRON.   
+StabilaLink is firstly launched at STABILA’s official website and backed by STABILA foundation, StabilaLink is the STABILA wallet with the most users, coming in three versions (Chrome Wallet Extension/iOS/Android), and you're looking at the Chrome Wallet Extension for STABILA.   
 
 Main functions:    
 
-Sending and receiving TRX, TRC10 and TRC20 tokens;  
+Sending and receiving STB, TRC10 and TRC20 tokens;  
 Smart contract calls integrated;    
 
 
@@ -45,6 +45,6 @@ $ yarn lint
 ```
 
 ## Links
-+ [Website](https://www.tronlink.org/)
-+ [Support](https://t.me/tronlink)
-+ [Twitter](https://twitter.com/TronLinkWallet)
++ [Website](https://www.stabila.click/)
++ [Support](https://t.me/stabilaclick)
++ [Twitter](https://twitter.com/StabilaLinkWallet)

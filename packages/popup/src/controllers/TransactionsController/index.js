@@ -4,11 +4,11 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { Toast } from 'antd-mobile';
 import { BigNumber } from 'bignumber.js';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import { APP_STATE, CONTRACT_ADDRESS, ACCOUNT_TYPE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import { APP_STATE, CONTRACT_ADDRESS, ACCOUNT_TYPE } from '@stabilaclick/lib/constants';
 
 BigNumber.config({ EXPONENTIAL_AT: [-20, 30] });
-const token10DefaultImg = require('@tronlink/popup/src/assets/images/new/token_10_default.png');
+const token10DefaultImg = require('@stabilaclick/popup/src/assets/images/new/token_10_default.png');
 
 class TransactionsController extends React.Component {
     constructor(props) {
@@ -46,7 +46,7 @@ class TransactionsController extends React.Component {
         } = this.props;
         const { formatMessage } = this.props.intl;
         const { address, airdropInfo, type } = accounts.selected;
-        const { id = '_', name = 'TRX', decimals = 6, imgUrl, price = 0, amount, balance = 0, frozenBalance = 0 } = accounts.selectedToken;
+        const { id = '_', name = 'STB', decimals = 6, imgUrl, price = 0, amount, balance = 0, cdedBalance = 0 } = accounts.selectedToken;
         return (
             <div className='insetContainer transactions'>
                 <div className='pageHeader'>
@@ -59,7 +59,7 @@ class TransactionsController extends React.Component {
                     {
                         id !== '_' ?
                             <span className='detail' onClick={() => {
-                                let url = 'https://tronscan.org/#/';
+                                let url = 'https://stabilascan.org/#/';
                                 url += (id.match(/^T/) ? 'token20/' + id : 'token/' + id);
                                 window.open(url);
                             }
@@ -92,7 +92,7 @@ class TransactionsController extends React.Component {
                         }
                         {
                             id === '_' ?
-                                <div className='desc trx'>
+                                <div className='desc stb'>
                                     <div className='cell'>
                                         <div className='row1'>
                                             {balance}
@@ -103,10 +103,10 @@ class TransactionsController extends React.Component {
                                     </div>
                                     <div className='cell'>
                                         <div className='row1'>
-                                            {frozenBalance}
+                                            {cdedBalance}
                                         </div>
                                         <div className='row2'>
-                                            <FormattedMessage id='TRANSACTION.TOKEN_INFO.FROZEN_BALANCE'/>
+                                            <FormattedMessage id='TRANSACTION.TOKEN_INFO.CDED_BALANCE'/>
                                         </div>
                                     </div>
                                 </div>

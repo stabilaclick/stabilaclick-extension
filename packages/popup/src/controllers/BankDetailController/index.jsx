@@ -7,11 +7,11 @@
  */
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import { APP_STATE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import { APP_STATE } from '@stabilaclick/lib/constants';
 import { NavBar, Toast } from 'antd-mobile';
-import Utils from '@tronlink/lib/utils';
-import { getBankOrderInfoApi } from '@tronlink/popup/src/fetch/tronLending/tronLending';
+import Utils from '@stabilaclick/lib/utils';
+import { getBankOrderInfoApi } from '@stabilaclick/popup/src/fetch/stabilaLending/stabilaLending';
 
 import './BankDetailController.scss';
 
@@ -38,9 +38,9 @@ class BankDetailController extends React.Component {
         const requestUrl = getBankOrderInfoApi();
         const recordDetail = await PopupAPI.getBankRecordDetail(_id, requestUrl);
         const orderList = [
-            { id: 'BANK.RENTDETAIL.RENTNUM', type: 0, value: `${recordDetail.freeze_amount / Math.pow(10, 6)}TRX` },
+            { id: 'BANK.RENTDETAIL.RENTNUM', type: 0, value: `${recordDetail.cd_amount / Math.pow(10, 6)}STB` },
             { id: 'BANK.RENTDETAIL.RENTTIME', type: 2, value: recordDetail.days },
-            { id: 'BANK.RENTDETAIL.PAYNUM', type: 0, value: `${recordDetail.pay_amount / Math.pow(10, 6)}TRX` },
+            { id: 'BANK.RENTDETAIL.PAYNUM', type: 0, value: `${recordDetail.pay_amount / Math.pow(10, 6)}STB` },
             { id: 'BANK.RENTDETAIL.PAYTIME', type: 0, value: Utils.timetransTime(recordDetail.create_time) },
             { id: 'BANK.RENTDETAIL.EXPIRESTIME', type: 0, value: Utils.timetransTime(recordDetail.expire_time) },
         ];
@@ -86,7 +86,7 @@ class BankDetailController extends React.Component {
                     className='navbar'
                     mode='light'
                     icon={<div className='commonBack'></div>}
-                    onLeftClick={() => PopupAPI.changeState(APP_STATE.TRONBANK_RECORD)}
+                    onLeftClick={() => PopupAPI.changeState(APP_STATE.STABILABANK_RECORD)}
                 >
                     <FormattedMessage id='BANK.RENTDETAIL.TITLE' />
                 </NavBar>
@@ -122,7 +122,7 @@ class BankDetailController extends React.Component {
                             <FormattedMessage id='BANK.RENTDETAIL.TOACCOUNT'/>
                         </div>
                         <div className='accountNum'>
-                            {recordDetail.energy_address}
+                            {recordDetail.ucr_address}
                         </div>
                     </div>
                     {orderList.map((val, key) => (

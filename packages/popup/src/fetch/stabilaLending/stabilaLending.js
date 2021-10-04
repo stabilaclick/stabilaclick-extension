@@ -1,6 +1,6 @@
-import Utils from '@tronlink/lib/utils';
+import Utils from '@stabilaclick/lib/utils';
 
-// TronLending index
+// StabilaLending index
 export const getBankDefaultDataApi = () => {
     const requestUrl = `${Utils.requestUrl()}/api/bank/default_data`;
     return requestUrl;
@@ -21,13 +21,13 @@ export const postBankOrderApi = () => {
     return requestUrl;
 };
 
-// TronLending page list
+// StabilaLending page list
 export const getBankListApi = () => {
     const requestUrl = `${Utils.requestUrl()}/api/bank/list`;
     return requestUrl;
 };
 
-// TronLending record detail
+// StabilaLending record detail
 export const getBankOrderInfoApi = () => {
     const requestUrl = `${Utils.requestUrl()}/api/bank/order_info`;
     return requestUrl;

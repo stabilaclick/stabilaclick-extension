@@ -12,7 +12,7 @@ import './AccountDetails.scss';
 const AccountDetails = ({ account, prices }) => {
     const {
         balance,
-        energy,
+        ucr,
         bandwidth
     } = account;
 
@@ -26,17 +26,17 @@ const AccountDetails = ({ account, prices }) => {
     return (
         <div className='accountInfo'>
             <div className='accountBalance'>
-                <div className='trxBalance'>
+                <div className='stbBalance'>
                     <FormattedNumber value={ balance / 1000000 } maximumFractionDigits={ 6 } />
                     <span className='ticker'>
-                        TRX
+                        STB
                     </span>
                 </div>
                 <FormattedMessage id='TRANSACTIONS.CURRENCY' values={{ amount, currency }} />
             </div>
             <div className='accountLabel'>
-                <FormattedNumber value={ energy } />
-                <FormattedMessage id='TRANSACTIONS.ENERGY' />
+                <FormattedNumber value={ ucr } />
+                <FormattedMessage id='TRANSACTIONS.UCR' />
             </div>
             <div className='accountLabel'>
                 <FormattedNumber value={ bandwidth } />

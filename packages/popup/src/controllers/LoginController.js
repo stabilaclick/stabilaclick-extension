@@ -1,10 +1,10 @@
 import React from 'react';
-import Input from '@tronlink/popup/src/components/Input';
-import Button from '@tronlink/popup/src/components/Button';
+import Input from '@stabilaclick/popup/src/components/Input';
+import Button from '@stabilaclick/popup/src/components/Button';
 
 import { FormattedMessage } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import { app } from '@tronlink/popup/src/index';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import { app } from '@stabilaclick/popup/src/index';
 
 class LoginController extends React.Component {
     state = {

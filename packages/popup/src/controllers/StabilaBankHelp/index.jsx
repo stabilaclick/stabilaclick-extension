@@ -1,11 +1,11 @@
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import { APP_STATE } from '@tronlink/lib/constants';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import { APP_STATE } from '@stabilaclick/lib/constants';
 import { Accordion, NavBar } from 'antd-mobile';
-import './TronBankHelp.scss';
+import './StabilaBankHelp.scss';
 
-class TronBankHelp extends React.Component {
+class StabilaBankHelp extends React.Component {
     onChange = (key) => {
         console.log(key);
     };
@@ -18,11 +18,11 @@ class TronBankHelp extends React.Component {
                     className='navbar'
                     mode='light'
                     icon={<div className='commonBack'></div>}
-                    onLeftClick={() => PopupAPI.changeState(APP_STATE.TRONBANK)}
+                    onLeftClick={() => PopupAPI.changeState(APP_STATE.STABILABANK)}
                 >
                     <FormattedMessage id='BANK.RENTNUMMODAL.HELP' />
                 </NavBar>
-                <section className='tronBankContent'>
+                <section className='stabilaBankContent'>
                     <Accordion className='my-accordion' onChange={this.onChange}>
                         <Accordion.Panel header={formatMessage({ id: 'BANK.HELP.ANNOUNCEMENTS' })} className='announcements'>
                             <section className='announcementsCont'>
@@ -36,13 +36,13 @@ class TronBankHelp extends React.Component {
                             <section className='feedbackCont'>
                                 <h2 className='title'><FormattedMessage id='BANK.HELP.JOINCOMMUNITY' /></h2>
                                 <p className='content'>
-                                    <img src={require('../../assets/images/new/tronBank/telegram.svg')} alt='telegram'/><a href='https://t.me/Tronlending' rel='noopener noreferrer' target='_blank'><span className='linkStyle'>（TronLink Official Group）</span></a>
+                                    <img src={require('../../assets/images/new/stabilaBank/telegram.svg')} alt='telegram'/><a href='https://t.me/Stabilalending' rel='noopener noreferrer' target='_blank'><span className='linkStyle'>（StabilaLink Official Group）</span></a>
                                 </p>
                                 <h2 className='title'>
                                     <FormattedMessage id='BANK.HELP.FEEDBACK' />
                                 </h2>
                                 <p className='content single'>
-                                    tronlending@tronlink.org
+                                    stabilalending@stabila.click
                                 </p>
                             </section>
                         </Accordion.Panel>
@@ -53,4 +53,4 @@ class TronBankHelp extends React.Component {
     }
 }
 
-export default injectIntl(TronBankHelp);
+export default injectIntl(StabilaBankHelp);

@@ -1,13 +1,13 @@
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from '@tronlink/lib/api';
-import Utils from '@tronlink/lib/utils';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import Utils from '@stabilaclick/lib/utils';
 import Toast, { T } from 'react-toast-mobile';
 import { Switch } from 'antd-mobile';
-import TronWeb from 'tronweb';
-import { TOP_TOKEN,CONTRACT_ADDRESS } from '@tronlink/lib/constants';
-const trxImg = require('@tronlink/popup/src/assets/images/new/trx.png');
-const token10DefaultImg = require('@tronlink/popup/src/assets/images/new/token_10_default.png');
+import StabilaWeb from 'stabilaweb';
+import { TOP_TOKEN,CONTRACT_ADDRESS } from '@stabilaclick/lib/constants';
+const stbImg = require('@stabilaclick/popup/src/assets/images/new/stb.png');
+const token10DefaultImg = require('@stabilaclick/popup/src/assets/images/new/token_10_default.png');
 class AssetManageController extends React.Component {
     constructor(props) {
         super(props);
@@ -90,8 +90,8 @@ class AssetManageController extends React.Component {
         const { formatMessage } = this.props.intl;
         const { selected, onCancel, vTokenList, prices, chains  } = this.props;
         const { address, allTokens, filterTokens, deleteToken } = this.state;
-        const trx_price = prices.priceList[prices.selected];
-        const trx = { tokenId: '_', name: 'TRX', balance: (selected.balance + (selected.frozenBalance ? selected.frozenBalance: 0)), abbr: 'TRX', decimals: 6, imgUrl: trxImg, price: trx_price}
+        const stb_price = prices.priceList[prices.selected];
+        const stb = { tokenId: '_', name: 'STB', balance: (selected.balance + (selected.cdedBalance ? selected.cdedBalance: 0)), abbr: 'STB', decimals: 6, imgUrl: stbImg, price: stb_price}
         let tokens = { ...selected.tokens.basic, ...selected.tokens.smart };
         const topArray = [];
         TOP_TOKEN[ chains.selected === '_'? 'mainchain':'sidechain' ].forEach(v=>{
@@ -106,7 +106,7 @@ class AssetManageController extends React.Component {
             }
         });
         tokens = Utils.dataLetterSort(Object.entries(tokens).filter(([tokenId, token]) => typeof token === 'object' ).map(v => { v[ 1 ].tokenId = v[ 0 ];return v[ 1 ]; }).filter(v => v.balance > 0 || (v.balance == 0 && !v.isLocked) ), 'abbr', 'symbol',topArray);
-        tokens = [trx, ...tokens];
+        tokens = [stb, ...tokens];
         tokens = tokens.filter(({tokenId, ...token})=>!token.hasOwnProperty('chain') || token.chain === chains.selected).map(({tokenId,...token})=>{
             if(TOP_TOKEN[ chains.selected === '_'? 'mainchain':'sidechain' ].includes(tokenId) || tokenId === '_')
                 token.isTop = true;
@@ -133,7 +133,7 @@ class AssetManageController extends React.Component {
                             const value = e.target.value;
                             let fTokens = [];
                             if(value !== '') {
-                                if(TronWeb.isAddress(value)) {
+                                if(StabilaWeb.isAddress(value)) {
                                     const token = await PopupAPI.getSmartToken(value);
                                     if(!token) {
                                         T.notify(formatMessage({ id: 'ERRORS.INVALID_TOKEN' }));
@@ -206,7 +206,7 @@ class AssetManageController extends React.Component {
                                                     this.setState({ filterTokens: filters });
                                                     if(!isList) {
                                                         const token = { name, imgUrl, balance, isLocked: false, decimals, price: 0 };
-                                                        //const key = TronWeb.isAddress(address.value) && !selected.tokens.smart.hasOwnProperty(address.value) ? 'symbol' : 'abbr';
+                                                        //const key = StabilaWeb.isAddress(address.value) && !selected.tokens.smart.hasOwnProperty(address.value) ? 'symbol' : 'abbr';
                                                         const key = 'symbol';
                                                         token[ key ] = abbr || symbol;
                                                         if(field === 'smart'){
@@ -239,7 +239,7 @@ class AssetManageController extends React.Component {
                                                 {
                                                     isVerify
                                                         ?
-                                                    <img src={require('@tronlink/popup/src/assets/images/new/icon-verify.svg')} />
+                                                    <img src={require('@stabilaclick/popup/src/assets/images/new/icon-verify.svg')} />
                                                         :
                                                     null
                                                 }

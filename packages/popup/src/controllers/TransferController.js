@@ -1,17 +1,17 @@
 /**
- * Created by tron on 2019/9/3.
+ * Created by stabila on 2019/9/3.
  */
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { BigNumber } from 'bignumber.js';
-import { PopupAPI } from "@tronlink/lib/api";
-import Button from '@tronlink/popup/src/components/Button';
-import { VALIDATION_STATE, APP_STATE, CONTRACT_ADDRESS, ACCOUNT_TYPE, TOP_TOKEN,FEE } from '@tronlink/lib/constants';
+import { PopupAPI } from "@stabilaclick/lib/api";
+import Button from '@stabilaclick/popup/src/components/Button';
+import { VALIDATION_STATE, APP_STATE, CONTRACT_ADDRESS, ACCOUNT_TYPE, TOP_TOKEN,FEE } from '@stabilaclick/lib/constants';
 import { Toast } from 'antd-mobile';
 import { Popover } from 'antd-mobile';
-import Utils  from '@tronlink/lib/utils';
-import Alert from '@tronlink/popup/src/components/Alert';
-const trxImg = require('@tronlink/popup/src/assets/images/new/trx.png');
+import Utils  from '@stabilaclick/lib/utils';
+import Alert from '@stabilaclick/popup/src/components/Alert';
+const stbImg = require('@stabilaclick/popup/src/assets/images/new/stb.png');
 class TransferController extends React.Component {
     constructor(props) {
         super(props);
@@ -22,10 +22,10 @@ class TransferController extends React.Component {
             },
             selectedToken: {
                 id: '_',
-                name: 'TRX',
+                name: 'STB',
                 amount: 0,
                 decimals: 6,
-                abbr: 'TRX'
+                abbr: 'STB'
             },
             amount: {
                 error: '',
@@ -79,7 +79,7 @@ class TransferController extends React.Component {
         //const { chains } = this.props;
         // const selectedToken = {
         //     id: '_',
-        //     name: 'TRX',
+        //     name: 'STB',
         //     decimals: 6,
         //     amount: new BigNumber(accounts[ address ].balance).shiftedBy(-6).toString()
         // };
@@ -163,7 +163,7 @@ class TransferController extends React.Component {
                     amount: {
                         ...amount,
                         valid:false,
-                        error: 'ACCOUNT.TRANSFER.WARNING.TRX_LIMIT'
+                        error: 'ACCOUNT.TRANSFER.WARNING.STB_LIMIT'
                     }
                 });
             } else if(id !== '_' && chains.selected !== '_' && new BigNumber(selected.balance).shiftedBy(-6).lt(new BigNumber(FEE.WITHDRAW_FEE).shiftedBy(-6))){
@@ -171,7 +171,7 @@ class TransferController extends React.Component {
                     amount: {
                         ...amount,
                         valid: false,
-                        error: 'ACCOUNT.TRANSFER.WARNING.TRX_NOT_ENOUGH'
+                        error: 'ACCOUNT.TRANSFER.WARNING.STB_NOT_ENOUGH'
                     }
                 });
             } else if(id === '_' && chains.selected !== '_' && new BigNumber(selected.balance - FEE.WITHDRAW_FEE).shiftedBy(-6).lt(value) ){
@@ -179,34 +179,34 @@ class TransferController extends React.Component {
                     amount: {
                         ...amount,
                         valid: false,
-                        error: 'ACCOUNT.TRANSFER.WARNING.TRX_NOT_ENOUGH'
+                        error: 'ACCOUNT.TRANSFER.WARNING.STB_NOT_ENOUGH'
                     }
                 });
             }
 
 
-            if(selected.netLimit - selected.netUsed < 300 && selected.energy - selected.energyUsed > 10000){
+            if(selected.netLimit - selected.netUsed < 300 && selected.ucr - selected.ucrUsed > 10000){
                 return this.setState({
                     amount: {
                         ...amount,
                         valid,
-                        error: valid?'EXCEPTION.SEND.BANDWIDTH_NOT_ENOUGH_ERROR':'EXCEPTION.SEND.BANDWIDTH_NOT_ENOUGH_TRX_ERROR'
+                        error: valid?'EXCEPTION.SEND.BANDWIDTH_NOT_ENOUGH_ERROR':'EXCEPTION.SEND.BANDWIDTH_NOT_ENOUGH_STB_ERROR'
                     }
                 });
-            } else if(selected.netLimit - selected.netUsed >= 300 && selected.energy - selected.energyUsed < 10000) {
+            } else if(selected.netLimit - selected.netUsed >= 300 && selected.ucr - selected.ucrUsed < 10000) {
                 return this.setState({
                     amount: {
                         ...amount,
                         valid,
-                        error: valid?'EXCEPTION.SEND.ENERGY_NOT_ENOUGH_ERROR':'EXCEPTION.SEND.ENERGY_NOT_ENOUGH_TRX_ERROR'
+                        error: valid?'EXCEPTION.SEND.UCR_NOT_ENOUGH_ERROR':'EXCEPTION.SEND.UCR_NOT_ENOUGH_STB_ERROR'
                     }
                 });
-            } else if(selected.netLimit - selected.netUsed < 300 && selected.energy - selected.energyUsed < 10000) {
+            } else if(selected.netLimit - selected.netUsed < 300 && selected.ucr - selected.ucrUsed < 10000) {
                 return this.setState({
                     amount: {
                         ...amount,
                         valid:valid,
-                        error: valid?'EXCEPTION.SEND.BANDWIDTH_ENERGY_NOT_ENOUGH_ERROR':'EXCEPTION.SEND.ENERGY_NOT_ENOUGH_TRX_ERROR'
+                        error: valid?'EXCEPTION.SEND.BANDWIDTH_UCR_NOT_ENOUGH_ERROR':'EXCEPTION.SEND.UCR_NOT_ENOUGH_STB_ERROR'
                     }
                 });
             } else {
@@ -247,9 +247,9 @@ class TransferController extends React.Component {
             let func;
             if (id === "_") {
                 if(chains.selected === '_'){
-                    func = PopupAPI.depositTrx(new BigNumber(amount).shiftedBy(6).toString());
+                    func = PopupAPI.depositStb(new BigNumber(amount).shiftedBy(6).toString());
                 }else{
-                    func = PopupAPI.withdrawTrx(new BigNumber(amount).shiftedBy(6).toString());
+                    func = PopupAPI.withdrawStb(new BigNumber(amount).shiftedBy(6).toString());
                 }
             } else if (id.match(/^T/)) {
                 if(chains.selected === '_') {
@@ -293,7 +293,7 @@ class TransferController extends React.Component {
         const { selected } = this.props.accounts;
         const { chains,onCancel } = this.props;
         const { formatMessage } = this.props.intl;
-        const trx = { tokenId: '_', name: 'TRX', balance: selected.balance, frozenBalance:selected.frozenBalance ,abbr: 'TRX', decimals: 6, imgUrl: trxImg,isMapping:true };
+        const stb = { tokenId: '_', name: 'STB', balance: selected.balance, cdedBalance:selected.cdedBalance ,abbr: 'STB', decimals: 6, imgUrl: stbImg,isMapping:true };
         let tokens = { ...selected.tokens.basic, ...selected.tokens.smart };
         const topArray = [];
         allTokens.length && TOP_TOKEN[chains.selected === "_" ? 'mainchain':'sidechain'].forEach(v=>{
@@ -309,7 +309,7 @@ class TransferController extends React.Component {
         });
         tokens = Utils.dataLetterSort(Object.entries(tokens).filter(([tokenId, token]) => typeof token === 'object' && (!token.hasOwnProperty('chain') || token.chain === chains.selected) ).map(v => { v[ 1 ].tokenId = v[ 0 ];return v[ 1 ]; }), 'abbr' ,'symbol',topArray);
         tokens = tokens.map(v=>{ v.isMapping = v.hasOwnProperty('isMapping') ? v.isMapping:( v.tokenId.match(/^T/) ? false : true); return v;}).filter(({isMapping = false})=> isMapping);
-        tokens = [trx, ...tokens];
+        tokens = [stb, ...tokens];
         return (
             <div className='insetContainer send' onClick={() => this.setState({ isOpen: { account: false, token: false } }) }>
                 <div className='pageHeader'>
@@ -325,7 +325,7 @@ class TransferController extends React.Component {
                         </div>
                         <div className='otherInfo'>
                             <FormattedMessage id='COMMON.BALANCE'/>:&nbsp;
-                            {selected.balance / Math.pow(10, 6)} TRX
+                            {selected.balance / Math.pow(10, 6)} STB
                         </div>
                     </div>
                     <div className='input-group'>
@@ -335,7 +335,7 @@ class TransferController extends React.Component {
                                 <span title={`${selectedToken.name}(${selectedToken.amount})`}>{`${selectedToken.name}(${selectedToken.amount})`}</span>{selectedToken.id !== '_' ? (<span>id:{selectedToken.id.length === 7 ? selectedToken.id : selectedToken.id.substr(0, 6) + '...' + selectedToken.id.substr(-6)}</span>) : ''}</div>
                             <div className='dropWrap' style={isOpen.token ? (tokens.length <= 5 ? { height: 36 * tokens.length } : { height: 180, overflow: 'scroll' }) : {}}>
                                 {
-                                    tokens.filter(({ isLocked = false }) => !isLocked ).map(({ tokenId: id, balance, name, decimals, decimal = false, abbr = false, symbol = false,imgUrl=false,frozenBalance = 0, isMapping }) => {
+                                    tokens.filter(({ isLocked = false }) => !isLocked ).map(({ tokenId: id, balance, name, decimals, decimal = false, abbr = false, symbol = false,imgUrl=false,cdedBalance = 0, isMapping }) => {
                                         const d =  decimal || decimals;
                                         const BN = BigNumber.clone({
                                             DECIMAL_PLACES: d,
@@ -344,11 +344,11 @@ class TransferController extends React.Component {
                                         const amount = new BN(balance)
                                             .shiftedBy(-d)
                                             .toString();
-                                        const frozenAmount = new BN(frozenBalance)
+                                        const cdedAmount = new BN(cdedBalance)
                                             .shiftedBy(-d)
                                             .toString();
                                         const token = { id, amount, name, decimals:d , abbr: abbr || symbol, imgUrl, isMapping};
-                                        return <div onClick={(e) => this.changeToken(id === '_'?{...token,balance:amount,frozenBalance:frozenAmount}:token, e) } className={'dropItem' + (id === selectedToken.id ? ' selected' : '')}><span title={`${name}(${amount})`}>{`${name}(${amount})`}</span>{id !== '_' ? (<span>id:{id.length === 7 ? id : id.substr(0, 6) + '...' + id.substr(-6)}</span>) : ''}</div>
+                                        return <div onClick={(e) => this.changeToken(id === '_'?{...token,balance:amount,cdedBalance:cdedAmount}:token, e) } className={'dropItem' + (id === selectedToken.id ? ' selected' : '')}><span title={`${name}(${amount})`}>{`${name}(${amount})`}</span>{id !== '_' ? (<span>id:{id.length === 7 ? id : id.substr(0, 6) + '...' + id.substr(-6)}</span>) : ''}</div>
 
                                     })
                                 }
@@ -367,7 +367,7 @@ class TransferController extends React.Component {
                             }
                         </label>
                         <div className='input'>
-                            <input type='text' value={amount.value} placeholder={selectedToken.id === '_'?formatMessage({id:'ACCOUNT.TRANSFER.WARNING.TRX_LIMIT'}):''} onChange={ (e) => {
+                            <input type='text' value={amount.value} placeholder={selectedToken.id === '_'?formatMessage({id:'ACCOUNT.TRANSFER.WARNING.STB_LIMIT'}):''} onChange={ (e) => {
                                 if(e.target.value != selectedToken.amount){
                                     this.refs['max'].classList.remove('selected');
                                 }else{

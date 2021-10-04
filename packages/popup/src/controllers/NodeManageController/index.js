@@ -1,10 +1,10 @@
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { VALIDATION_STATE } from "@tronlink/lib/constants";
-import Confirmation from '@tronlink/popup/src/components/Confirmation';
-import { PopupAPI } from '@tronlink/lib/api';
-import { app } from "@tronlink/popup/src";
-import Button from '@tronlink/popup/src/components/Button';
+import { VALIDATION_STATE } from "@stabilaclick/lib/constants";
+import Confirmation from '@stabilaclick/popup/src/components/Confirmation';
+import { PopupAPI } from '@stabilaclick/lib/api';
+import { app } from "@stabilaclick/popup/src";
+import Button from '@stabilaclick/popup/src/components/Button';
 import { Toast } from 'antd-mobile';
 
 import './NodeManageController.scss';

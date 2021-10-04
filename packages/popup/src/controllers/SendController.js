@@ -1,14 +1,14 @@
 import React from 'react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { BigNumber } from 'bignumber.js';
-import { PopupAPI } from "@tronlink/lib/api";
-import Button from '@tronlink/popup/src/components/Button';
-import Loading from '@tronlink/popup/src/components/Loading';
-import { VALIDATION_STATE, APP_STATE, CONTRACT_ADDRESS, ACCOUNT_TYPE, TOP_TOKEN } from '@tronlink/lib/constants';
-import TronWeb from "tronweb";
+import { PopupAPI } from "@stabilaclick/lib/api";
+import Button from '@stabilaclick/popup/src/components/Button';
+import Loading from '@stabilaclick/popup/src/components/Loading';
+import { VALIDATION_STATE, APP_STATE, CONTRACT_ADDRESS, ACCOUNT_TYPE, TOP_TOKEN } from '@stabilaclick/lib/constants';
+import StabilaWeb from "stabilaweb";
 import { Toast } from 'antd-mobile';
-import Utils  from '@tronlink/lib/utils';
-const trxImg = require('@tronlink/popup/src/assets/images/new/trx.png');
+import Utils  from '@stabilaclick/lib/utils';
+const stbImg = require('@stabilaclick/popup/src/assets/images/new/stb.png');
 class SendController extends React.Component {
     constructor(props) {
         super(props);
@@ -19,10 +19,10 @@ class SendController extends React.Component {
             },
             selectedToken: {
                 id: '_',
-                name: 'TRX',
+                name: 'STB',
                 amount: 0,
                 decimals: 6,
-                abbr: 'TRX'
+                abbr: 'STB'
             },
             recipient: {
                 error: '',
@@ -118,13 +118,13 @@ class SendController extends React.Component {
         const { selected, accounts } = this.props.accounts;
         const selectedToken = {
             isMapping : true,
-            imgUrl: trxImg,
+            imgUrl: stbImg,
             id: '_',
-            name: 'TRX',
+            name: 'STB',
             decimals: 6,
             amount: new BigNumber(accounts[ address ].balance).shiftedBy(-6).toString(),
-            balance : new BigNumber(accounts[ address ].balance - accounts[ address ].frozenBalance).shiftedBy(-6).toString(),
-            frozenBalance : new BigNumber(accounts[ address ].frozenBalance).shiftedBy(-6).toString()
+            balance : new BigNumber(accounts[ address ].balance - accounts[ address ].cdedBalance).shiftedBy(-6).toString(),
+            cdedBalance : new BigNumber(accounts[ address ].cdedBalance).shiftedBy(-6).toString()
         };
 
         if(selected.address === address)
@@ -148,7 +148,7 @@ class SendController extends React.Component {
         if(!address.length)
             return this.setState({recipient:{value: '', valid: false, error: ''}});
 
-        if(!TronWeb.isAddress(address)) {
+        if(!StabilaWeb.isAddress(address)) {
             recipient.valid = false;
             recipient.error = 'EXCEPTION.SEND.ADDRESS_FORMAT_ERROR';
         } else {
@@ -235,7 +235,7 @@ class SendController extends React.Component {
                         amount: {
                             ...amount,
                             valid: false,
-                            error: 'ACCOUNT.TRANSFER.WARNING.TRX_NOT_ENOUGH'
+                            error: 'ACCOUNT.TRANSFER.WARNING.STB_NOT_ENOUGH'
                         }
                     });
                 }
@@ -245,7 +245,7 @@ class SendController extends React.Component {
                         amount: {
                             ...amount,
                             valid: false,
-                            error: 'EXCEPTION.SEND.BANDWIDTH_NOT_ENOUGH_TRX_ERROR'
+                            error: 'EXCEPTION.SEND.BANDWIDTH_NOT_ENOUGH_STB_ERROR'
                         }
                     });
                 }
@@ -254,7 +254,7 @@ class SendController extends React.Component {
                 const valid = this.state.recipient.isActivated ? true : false;
                 if(valid) {
                     const isEnough = new BigNumber(selected.balance).shiftedBy(-6).gte(new BigNumber(1))   ? true : false;
-                    if(selected.netLimit - selected.netUsed < 300 && selected.energy - selected.energyUsed > 10000){
+                    if(selected.netLimit - selected.netUsed < 300 && selected.ucr - selected.ucrUsed > 10000){
                         return this.setState({
                             amount: {
                                 ...amount,
@@ -262,20 +262,20 @@ class SendController extends React.Component {
                                 error: 'EXCEPTION.SEND.BANDWIDTH_NOT_ENOUGH_ERROR'
                             }
                         });
-                    } else if(selected.netLimit - selected.netUsed >= 300 && selected.energy - selected.energyUsed < 10000) {
+                    } else if(selected.netLimit - selected.netUsed >= 300 && selected.ucr - selected.ucrUsed < 10000) {
                         return this.setState({
                             amount: {
                                 ...amount,
                                 valid:isEnough,
-                                error: 'EXCEPTION.SEND.ENERGY_NOT_ENOUGH_ERROR'
+                                error: 'EXCEPTION.SEND.UCR_NOT_ENOUGH_ERROR'
                             }
                         });
-                    } else if(selected.netLimit - selected.netUsed < 300 && selected.energy - selected.energyUsed < 10000) {
+                    } else if(selected.netLimit - selected.netUsed < 300 && selected.ucr - selected.ucrUsed < 10000) {
                         return this.setState({
                             amount: {
                                 ...amount,
                                 valid:isEnough,
-                                error: 'EXCEPTION.SEND.BANDWIDTH_ENERGY_NOT_ENOUGH_ERROR'
+                                error: 'EXCEPTION.SEND.BANDWIDTH_UCR_NOT_ENOUGH_ERROR'
                             }
                         });
 
@@ -348,7 +348,7 @@ class SendController extends React.Component {
         if(selected.type !== ACCOUNT_TYPE.LEDGER) {
             let func;
             if (id === "_") {
-                func = PopupAPI.sendTrx(
+                func = PopupAPI.sendStb(
                     recipient,
                     new BigNumber(amount).shiftedBy(6).toString()
                 );
@@ -381,12 +381,12 @@ class SendController extends React.Component {
                 }, true);
             });
         } else {
-            const iframe = document.querySelector('#tronLedgerBridge').contentWindow;
+            const iframe = document.querySelector('#stabilaLedgerBridge').contentWindow;
             const fromAddress = selected.address;
             const toAddress = recipient;
             this.setState({loadingLedger:true});
             if (id === "_") {
-                iframe.postMessage({target:"LEDGER-IFRAME",action:'send trx',data:{toAddress,fromAddress,amount:new BigNumber(amount).shiftedBy(6).toString()}},'*')
+                iframe.postMessage({target:"LEDGER-IFRAME",action:'send stb',data:{toAddress,fromAddress,amount:new BigNumber(amount).shiftedBy(6).toString()}},'*')
             }else if(id.match(/^T/)){
                 iframe.postMessage({target:"LEDGER-IFRAME",action:'send trc20',data:{id,toAddress,fromAddress,amount:new BigNumber(amount).shiftedBy(decimals).toString(),decimals,TokenName:name}},'*')
             }else{
@@ -397,7 +397,7 @@ class SendController extends React.Component {
 
     onCancel() {
         const { selected, selectedToken } = this.props.accounts;
-        const token10DefaultImg = require('@tronlink/popup/src/assets/images/new/token_10_default.png');
+        const token10DefaultImg = require('@stabilaclick/popup/src/assets/images/new/token_10_default.png');
         if( selected.dealCurrencyPage == 1) {
             const selectedCurrency = {
                 id: selectedToken.id,
@@ -408,7 +408,7 @@ class SendController extends React.Component {
                 price: selectedToken.price,
                 imgUrl: selectedToken.imgUrl ? selectedToken.imgUrl : token10DefaultImg,
                 balance: selectedToken.balance || 0,
-                frozenBalance: selectedToken.frozenBalance || 0,
+                cdedBalance: selectedToken.cdedBalance || 0,
                 isMapping : selectedToken.isMapping
             };
             PopupAPI.setSelectedToken(selectedCurrency);
@@ -421,7 +421,7 @@ class SendController extends React.Component {
 
     handleClose(){
         const { formatMessage } = this.props.intl;
-        const iframe = document.querySelector('#tronLedgerBridge').contentWindow;
+        const iframe = document.querySelector('#stabilaLedgerBridge').contentWindow;
         iframe.postMessage({target:"LEDGER-IFRAME",action:'cancel transaction',data:{}},'*');
         this.setState({loadingLedger:false,loading:false},()=>{
             Toast.fail(formatMessage({id:'CREATION.LEDGER.TIP_CANCEL_TRANSACTION'}),3,()=>{},true);
@@ -432,7 +432,7 @@ class SendController extends React.Component {
         const {chains} = this.props;
         const { isOpen, selectedToken, loading, amount, recipient, loadingLedger,allTokens } = this.state;
         const { selected, accounts } = this.props.accounts;
-        const trx = { tokenId: '_', name: 'TRX', balance: selected.balance,frozenBalance: selected.frozenBalance, abbr: 'TRX', decimals: 6, imgUrl: trxImg,isMapping:true };
+        const stb = { tokenId: '_', name: 'STB', balance: selected.balance,cdedBalance: selected.cdedBalance, abbr: 'STB', decimals: 6, imgUrl: stbImg,isMapping:true };
         let tokens = { ...selected.tokens.basic, ...selected.tokens.smart};
         const topArray = [];
         allTokens.length && TOP_TOKEN[chains.selected === '_' ? 'mainchain':'sidechain'].forEach(v=>{
@@ -447,7 +447,7 @@ class SendController extends React.Component {
             }
         });
         tokens = Utils.dataLetterSort(Object.entries(tokens).filter(([tokenId, token]) => typeof token === 'object' && !token.hasOwnProperty('chain') || token.chain === chains.selected ).map(v => { v[1].isMapping = v[1].hasOwnProperty('isMapping')?v[1].isMapping:true;v[ 1 ].tokenId = v[ 0 ];return v[ 1 ]; }), 'abbr' ,'symbol',topArray);
-        tokens = [trx, ...tokens];
+        tokens = [stb, ...tokens];
         return (
             <div className='insetContainer send' onClick={() => this.setState({ isOpen: { account: false, token: false } }) }>
                 <Loading show={loadingLedger} onClose={this.handleClose.bind(this)} />
@@ -468,7 +468,7 @@ class SendController extends React.Component {
                         </div>
                         <div className='otherInfo'>
                             <FormattedMessage id='COMMON.BALANCE'/>:&nbsp;
-                            {selected.balance / Math.pow(10, 6)} TRX
+                            {selected.balance / Math.pow(10, 6)} STB
                         </div>
                     </div>
                     <div className={'input-group' + (recipient.error ? ' error' : '')}>
@@ -487,7 +487,7 @@ class SendController extends React.Component {
                                 <span title={`${selectedToken.name}(${selectedToken.amount})`}>{`${selectedToken.name}(${selectedToken.amount})`}</span>{selectedToken.id !== '_' ? (<span>id:{selectedToken.id.length === 7 ? selectedToken.id : selectedToken.id.substr(0, 6) + '...' + selectedToken.id.substr(-6)}</span>) : ''}</div>
                             <div className='dropWrap' style={isOpen.token ? (tokens.length <= 5 ? { height: 36 * tokens.length } : { height: 180, overflow: 'scroll' }) : {}}>
                                 {
-                                    tokens.filter(({ isLocked = false }) => !isLocked ).map(({ tokenId: id, balance, name, decimals, decimal = false, abbr = false, symbol = false, imgUrl = false,frozenBalance = 0 }) => {
+                                    tokens.filter(({ isLocked = false }) => !isLocked ).map(({ tokenId: id, balance, name, decimals, decimal = false, abbr = false, symbol = false, imgUrl = false,cdedBalance = 0 }) => {
                                         const d =  decimal || decimals;
                                         const BN = BigNumber.clone({
                                             DECIMAL_PLACES: d,
@@ -496,11 +496,11 @@ class SendController extends React.Component {
                                         const amount = new BN(balance)
                                             .shiftedBy(-d)
                                             .toString();
-                                        const frozenAmount = new BN(frozenBalance)
+                                        const cdedAmount = new BN(cdedBalance)
                                             .shiftedBy(-d)
                                             .toString();
                                         const token = { id, amount, name, decimals:d, abbr: abbr || symbol,imgUrl};
-                                        return <div onClick={(e) => this.changeToken(id === '_'? {...token, balance:amount, frozenBalance:frozenAmount}:token, e) } className={'dropItem' + (id === selectedToken.id ? ' selected' : '')}><span title={`${name}(${amount})`}>{`${name}(${amount})`}</span>{id !== '_' ? (<span>id:{id.length === 7 ? id : id.substr(0, 6) + '...' + id.substr(-6)}</span>) : ''}</div>
+                                        return <div onClick={(e) => this.changeToken(id === '_'? {...token, balance:amount, cdedBalance:cdedAmount}:token, e) } className={'dropItem' + (id === selectedToken.id ? ' selected' : '')}><span title={`${name}(${amount})`}>{`${name}(${amount})`}</span>{id !== '_' ? (<span>id:{id.length === 7 ? id : id.substr(0, 6) + '...' + id.substr(-6)}</span>) : ''}</div>
 
                                     })
                                 }

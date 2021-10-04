@@ -3,15 +3,15 @@ import QRCode from 'qrcode-react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { Toast } from 'antd-mobile';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import { PopupAPI } from "@tronlink/lib/api";
-import { APP_STATE } from "@tronlink/lib/constants";
+import { PopupAPI } from "@stabilaclick/lib/api";
+import { APP_STATE } from "@stabilaclick/lib/constants";
 
 class ReceiveController extends React.Component {
 // const ReceiveController = props => {
 
     onCancel() {
         const { selected, selectedToken } = this.props.accounts;
-        const token10DefaultImg = require('@tronlink/popup/src/assets/images/new/token_10_default.png');
+        const token10DefaultImg = require('@stabilaclick/popup/src/assets/images/new/token_10_default.png');
         if( selected.dealCurrencyPage == 1) {
             const selectedCurrency = {
                 id: selectedToken.id,
@@ -22,7 +22,7 @@ class ReceiveController extends React.Component {
                 price: selectedToken.price,
                 imgUrl: selectedToken.imgUrl ? selectedToken.imgUrl : token10DefaultImg,
                 balance: selectedToken.balance || 0,
-                frozenBalance: selectedToken.frozenBalance || 0,
+                cdedBalance: selectedToken.cdedBalance || 0,
                 isMapping : selectedToken.isMapping
             };
             PopupAPI.setSelectedToken(selectedCurrency);

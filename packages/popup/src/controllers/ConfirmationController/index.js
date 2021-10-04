@@ -1,10 +1,10 @@
 import React from 'react';
-import Button from '@tronlink/popup/src/components/Button';
-import Alert from '@tronlink/popup/src/components/Alert';
-import TronWeb from 'tronweb';
+import Button from '@stabilaclick/popup/src/components/Button';
+import Alert from '@stabilaclick/popup/src/components/Alert';
+import StabilaWeb from 'stabilaweb';
 import Dropdown from 'react-dropdown';
-import Utils from '@tronlink/lib/utils';
-import { PopupAPI } from '@tronlink/lib/api';
+import Utils from '@stabilaclick/lib/utils';
+import { PopupAPI } from '@stabilaclick/lib/api';
 import { connect } from 'react-redux';
 import ReactTooltip from 'react-tooltip';
 import {
@@ -17,7 +17,7 @@ import {
     CONFIRMATION_TYPE,
     BUTTON_TYPE,
     ACCOUNT_TYPE
-} from '@tronlink/lib/constants';
+} from '@stabilaclick/lib/constants';
 
 import 'react-dropdown/style.css';
 import './ConfirmationController.scss';
@@ -81,7 +81,7 @@ class ConfirmationController extends React.Component {
         const { hostname } = this.props.confirmation;
         const dappList = await PopupAPI.getDappList(true);
         const { used } = dappList;
-        const tronDapps = await PopupAPI.getAllDapps();
+        const stabilaDapps = await PopupAPI.getAllDapps();
         const regExp = new RegExp(hostname);
         if (used.length && used.some(({ href }) => href.match(regExp))) {
             const index = used.findIndex(({ href }) => href.match(regExp));
@@ -89,7 +89,7 @@ class ConfirmationController extends React.Component {
             used.splice(index, 1);
             used.unshift(item);
         } else {
-            const dapp = tronDapps.filter(({ href }) => href.match(regExp));
+            const dapp = stabilaDapps.filter(({ href }) => href.match(regExp));
             if (dapp.length) used.unshift(dapp[0]);
         }
         dappList.used = used;
@@ -108,7 +108,7 @@ class ConfirmationController extends React.Component {
         const { confirmation, authorizeDapps } = this.props;
         if (confirmation.contractType === 'TriggerSmartContract') {
             await this.addUsedDapp();
-            const contractAddress = TronWeb.address.fromHex(confirmation.input.contract_address);
+            const contractAddress = StabilaWeb.address.fromHex(confirmation.input.contract_address);
             if (isAutoAuthorize && !authorizeDapps.hasOwnProperty(contractAddress)) {
                 const o = {};
                 o.url = confirmation.hostname;
@@ -225,14 +225,14 @@ class ConfirmationController extends React.Component {
             meta.push({ key: 'CONFIRMATIONS.COST', value: formatNumber(input.amount) });
         }
 
-        if (input.frozen_balance) {
-            meta.push({ key: 'CONFIRMATIONS.COST', value: formatNumber(input.frozen_balance / 1000000) });
+        if (input.cded_balance) {
+            meta.push({ key: 'CONFIRMATIONS.COST', value: formatNumber(input.cded_balance / 1000000) });
         }
 
         if (input.asset_name) {
             meta.push({
                 key: 'CONFIRMATIONS.TOKEN',
-                value: this.tokensMap[TronWeb.toUtf8(input.asset_name)].split('_')[0] + ' (' + TronWeb.toUtf8(input.asset_name) + ')'
+                value: this.tokensMap[StabilaWeb.toUtf8(input.asset_name)].split('_')[0] + ' (' + StabilaWeb.toUtf8(input.asset_name) + ')'
             });
         }
 
@@ -241,7 +241,7 @@ class ConfirmationController extends React.Component {
         }
 
         if (input.to_address) {
-            const address = TronWeb.address.fromHex(input.to_address);
+            const address = StabilaWeb.address.fromHex(input.to_address);
             const trimmed = [
                 address.substr(0, 16),
                 address.substr(28)
@@ -262,8 +262,8 @@ class ConfirmationController extends React.Component {
             //args.length && args.map(({name,type,value})=>({key:name,value})).forEach(v=>meta.push(v))
         }
 
-        if (input.trx_num) {
-            meta.push({ key: 'CONFIRMATIONS.TRX_RATIO', value: formatNumber(input.trx_num) });
+        if (input.stb_num) {
+            meta.push({ key: 'CONFIRMATIONS.STB_RATIO', value: formatNumber(input.stb_num) });
         }
 
         if (input.num) {
