@@ -1,4 +1,4 @@
-# StabilaLink  
+# StabilaClick  
 
 StabilaLink is firstly launched at STABILA’s official website and backed by STABILA foundation, StabilaLink is the STABILA wallet with the most users, coming in three versions (Chrome Wallet Extension/iOS/Android), and you're looking at the Chrome Wallet Extension for STABILA.   
 
